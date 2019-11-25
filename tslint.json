@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "plugins": [
+        {
+          "name": "typescript-tslint-plugin"
+        }
+      ]
+    },
+    "extends": [
+      "tslint:latest",
+      "tslint-config-prettier"
+    ],
+    "rules":{
+
+    }
+  }
