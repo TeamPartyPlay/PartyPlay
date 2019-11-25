@@ -12,8 +12,8 @@ const ProfileScreen: NavigationStackScreenComponent<Props> = props => {
     const {navigate} = props.navigation;
     return(
       <Button
-          title="Go Home"
-          onPress={() => navigate('Home')}
+          title="Go Activity"
+          onPress={() => navigate('Activity')}
         />
     )
   }

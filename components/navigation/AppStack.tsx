@@ -1,12 +1,30 @@
+// tslint:disable-next-line: object-literal-sort-keys
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-import { EventScreen, EventsScreen, HomeScreen, ProfileScreen } from "../views";
+import * as View from "../views";
 
-const ProfileStack = createStackNavigator({Profile: ProfileScreen});
+const ProfileStack = createStackNavigator({Profile: View.ProfileScreen});
 
-const HomeStack = createStackNavigator({ Home: HomeScreen });
-const EventStack = createStackNavigator({Events: EventsScreen, Event: EventScreen});
+const ActivityStack = createStackNavigator({Activity: View.ActivityScreen});
 
-const AppStack = createBottomTabNavigator({Home: HomeStack, Events: EventStack, Profile: ProfileStack}, {initialRouteName:'Home'});
+const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen});
+
+const HomeStack = createStackNavigator({ Home: View.HomeScreen });
+const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.EventScreen});
+const MapStack = createStackNavigator({Map: View.MapScreen})
+
+const AppStack = createBottomTabNavigator(
+    {
+        Events: EventStack,
+        Map: MapStack, 
+        Playlist: PlaylistStack,
+        // tslint:disable-next-line: object-literal-sort-keys
+        Activity: ActivityStack, 
+        Profile: ProfileStack
+    },
+    {
+        initialRouteName:'Events'
+    }
+);
 
 export default AppStack
