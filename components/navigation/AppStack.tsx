@@ -1,7 +1,19 @@
 // tslint:disable-next-line: object-literal-sort-keys
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import * as View from "../views";
+
+const IconComponent = Ionicons;
+
+const Icons = {
+    Profile: "contact",
+    Activity: "notifications",
+    Playlist: "musical-notes",
+    Events: "calendar",
+    Map: "map"
+}
 
 const ProfileStack = createStackNavigator({Profile: View.ProfileScreen});
 
@@ -9,8 +21,8 @@ const ActivityStack = createStackNavigator({Activity: View.ActivityScreen});
 
 const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen});
 
-const HomeStack = createStackNavigator({ Home: View.HomeScreen });
 const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.EventScreen});
+
 const MapStack = createStackNavigator({Map: View.MapScreen})
 
 const AppStack = createBottomTabNavigator(
@@ -23,7 +35,17 @@ const AppStack = createBottomTabNavigator(
         Profile: ProfileStack
     },
     {
-        initialRouteName:'Events'
+        defaultNavigationOptions: props => ({
+            headerTitleStyle: {
+                fontFamily: 'Roboto',
+            },
+            tabBarIcon: ({ focused, horizontal, tintColor }) => {
+                const { routeName } = props.navigation.state;
+                return <IconComponent name={`md-${Icons[routeName]}`} size={25} />
+            },
+        }),
+        initialRouteName:'Events',
+
     }
 );
 

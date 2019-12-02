@@ -25,7 +25,7 @@ const ActivityScreen: NavigationStackScreenComponent<Props> = props => {
   
     return(
       <View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+        <View style={{flexDirection: 'column', justifyContent: 'space-between'}}>
           <Button
             title="Profile" 
             onPress={showProfile} 
@@ -40,7 +40,7 @@ const ActivityScreen: NavigationStackScreenComponent<Props> = props => {
 }
 
 ActivityScreen.navigationOptions = {
-    title: "Activity"
+  title: "Activity",   
 }
 
 export default ActivityScreen;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, ActivityIndicator } from "react-native";
+import { Text, View, ActivityIndicator, Image } from "react-native";
 import { 
     NavigationStackProp,
     NavigationStackScreenComponent 
@@ -15,7 +15,7 @@ const MapScreen: NavigationStackScreenComponent<Props> = props => {
     const {navigate} = props.navigation;
     return(
         <View>
-            <ActivityIndicator />
+            <Image source={require("../../assets/map-placeholder.jpg")} resizeMode="cover"></Image>
         </View>
     )
 }

@@ -11,7 +11,9 @@ This is the repository for the Party Play Application
 
 ## Other Notes
 
-### Features and Possible Impleenation
+[Working With Images](https://medium.com/the-react-native-log/tips-for-react-native-images-or-saying-goodbye-to-trial-and-error-b2baaf0a1a4d)
+
+### Features and Possible Implementation
 
 #### SnapMap Feature
 
