@@ -10,21 +10,23 @@ interface EventListItemProps {
     title: string,
     location: string,
     date: Date,
+    image: string
 }
 
 const EventListItem: React.FC<EventListItemProps> = (props: EventListItemProps) => {
-    const {navigation, title, location, date} = props;
+    const {navigation, title, location, date, image} = props;
+    console.log(image);
     return(
         <View style={styles.container}>
             <Image
                 style={{ width: 125, height: 125}}
-                source={require("../../assets/codepen.jpg")}
+                source={{uri: image}}
                 resizeMode="contain"
             />
             <View style={styles.subcontainer}>
                 <Text style={{fontSize: 18}}>{`${title}'s Birthday Party`}</Text>
-                <Text>194 Saint Paul Street</Text>
-                <Text>July 12th, 1998</Text>
+                <Text>{`${location}`}</Text>
+                <Text>{date.toLocaleTimeString()}</Text>
                 <Text>Friends</Text>
                 <View style={{flexDirection: "row", justifyContent:"space-around", alignItems: "stretch"}}>
                     <Button title="Interested" onPress={()=>{navigation.navigate("Event")}} />
@@ -41,8 +43,8 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         marginBottom: 5,
-        borderBottomColor: "black",
-        borderBottomWidth:3,
+        // borderBottomColor: "black",
+        // borderBottomWidth:3,
     },
     subcontainer:{
         flex: 5,

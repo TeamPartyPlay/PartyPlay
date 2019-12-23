@@ -1,7 +1,9 @@
+import faker from 'faker';
 import React from 'react';
 import { Text, View, Button, FlatList, StyleSheet} from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { EventListItem } from '../Event';
+
 
 
 // tslint:disable-next-line: interface-name
@@ -14,19 +16,13 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
     return(
         <View>
             <FlatList
-                data={[
-                    {key: 'Devin'},
-                    {key: 'Dan'},
-                    {key: 'Dominic'},
-                    {key: 'Jackson'},
-                    {key: 'James'},
-                    {key: 'Joel'},
-                    {key: 'John'},
-                    {key: 'Jillian'},
-                    {key: 'Jimmy'},
-                    {key: 'Julie'},
-                ]}
-                renderItem={({item}) => <EventListItem title={item.key}/>}
+                data={Array.from({length: 10}, (_, id)=>({
+                    date: faker.date.future(),
+                    image: faker.image.avatar(),
+                    key: faker.name.findName(), 
+                    location: faker.address.streetAddress(true), 
+                }))}
+                renderItem={({item}) => <EventListItem title={item.key} location={item.location} date={item.date} image={item.image}/>}
             />
             
         </View>
