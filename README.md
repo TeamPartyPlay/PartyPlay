@@ -22,3 +22,7 @@ This is the repository for the Party Play Application
 #### Custom Tab Bar Navigator
 
 [lets-create-a-custom-animated-tab-bar-with-react-native](https://dev.to/hrastnik/lets-create-a-custom-animated-tab-bar-with-react-native-3496)
+
+#### Spotify Implementation using Expo
+
+[spotify-web-api-authorization-with-react-native-expo](https://medium.com/@zachrach/spotify-web-api-authorization-with-react-native-expo-6ee1a290b2b0)
