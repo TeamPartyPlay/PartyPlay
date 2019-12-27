@@ -15,7 +15,7 @@ interface EventListItemProps {
 
 const EventListItem: React.FC<EventListItemProps> = (props: EventListItemProps) => {
     const {navigation, title, location, date, image} = props;
-    console.log(image);
+    // console.log(image);
     return(
         <View style={styles.container}>
             <Image

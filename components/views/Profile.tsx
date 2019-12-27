@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Image, Text, View, StyleSheet } from 'react-native';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
-import { EventListItem } from '../Event';
+
 
 type Props = {
     _id: string
