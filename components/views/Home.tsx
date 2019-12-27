@@ -1,23 +1,44 @@
-import { NavigationStackProp, NavigationStackScreenComponent} from 'react-navigation-stack';
-import { Button } from 'react-native';
 import React from 'react';
+import { AsyncStorage, Button, View, ButtonProps} from 'react-native';
+import { NavigationStackProp, NavigationStackScreenComponent} from 'react-navigation-stack';
 
-type HomeScreenProps = {
+
+
+// tslint:disable-next-line: interface-name
+interface HomeScreenProps {
   navigation: NavigationStackProp<{name: string}>
 }
 
 const HomeScreen: NavigationStackScreenComponent<HomeScreenProps> = props => {
   const {navigate} = props.navigation;
+
+  const signOut = async () => {
+    await AsyncStorage.clear();
+    navigate('Auth');
+  };
+
+  const showProfile =  async () => {
+    navigate('Profile');
+  }
+
   return(
-    <Button
-        title="Go to Jane's profile"
-        onPress={() => navigate('Profile', {name: 'Jane'})}
-      />
+    <View>
+      <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+        <Button
+          title="Profile" 
+          onPress={showProfile} 
+        />
+        <Button
+          title="Sign Out"
+          onPress={signOut} 
+        />
+      </View>
+    </View>
   )
 }
 
 HomeScreen.navigationOptions = {
-  title: 'Home'
+  title: 'Welcome to the app!'
 }
 
 export default HomeScreen;

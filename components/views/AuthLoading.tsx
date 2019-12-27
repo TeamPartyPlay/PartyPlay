@@ -1,56 +1,39 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   AsyncStorage,
   StatusBar,
-  StyleSheet,
   View,
 } from 'react-native';
-import { NavigationStackScreenComponent, NavigationStackProp } from 'react-navigation-stack';
+import { NavigationStackProp, NavigationStackScreenComponent  } from 'react-navigation-stack';
 
-type Props = {
+// tslint:disable-next-line: interface-name
+interface Props {
     navigation: NavigationStackProp<{name: string}>
 }
 
 const AuthLoadingScreen: NavigationStackScreenComponent<Props> = ({navigation}) => {
+    
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
     useEffect(() => {
         AsyncStorage.getItem('userToken')
         .then((userToken)=>{
             navigation.navigate(userToken ? 'App' : 'Auth');
         });
-        
-    }, [])
+    }, [mounted]);
+
     return (
         <View>
           <ActivityIndicator />
           <StatusBar barStyle="default" />
         </View>
-      );
-}
-
-/*class AuthLoadingScreen extends React.Component {
-  componentDidMount() {
-    this._bootstrapAsync();
-  }
-
-  // Fetch the token from storage then navigate to our appropriate place
-  _bootstrapAsync = async () => {
-    const userToken = await AsyncStorage.getItem('userToken');
-
-    // This will switch to the App screen or Auth screen and this loading
-    // screen will be unmounted and thrown away.
-    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
-  };
-
-  // Render any loading content that you like here
-  render() {
-    return (
-      <View>
-        <ActivityIndicator />
-        <StatusBar barStyle="default" />
-      </View>
     );
-  }
-}*/
+}
 
 export default AuthLoadingScreen;
