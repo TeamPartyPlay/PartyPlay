@@ -1,12 +1,52 @@
+// tslint:disable-next-line: object-literal-sort-keys
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-import { EventScreen, EventsScreen, HomeScreen, ProfileScreen } from "../views";
+import * as View from "../views";
 
-const ProfileStack = createStackNavigator({Profile: ProfileScreen});
+const IconComponent = Ionicons;
 
-const HomeStack = createStackNavigator({ Home: HomeScreen });
-const EventStack = createStackNavigator({Events: EventsScreen, Event: EventScreen});
+const Icons = {
+    Profile: "contact",
+    Activity: "notifications",
+    Playlist: "musical-notes",
+    Events: "calendar",
+    Map: "map"
+}
 
-const AppStack = createBottomTabNavigator({Home: HomeStack, Events: EventStack, Profile: ProfileStack}, {initialRouteName:'Home'});
+const ProfileStack = createStackNavigator({Profile: View.ProfileScreen});
+
+const ActivityStack = createStackNavigator({Activity: View.ActivityScreen});
+
+const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen});
+
+const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.EventScreen});
+
+const MapStack = createStackNavigator({Map: View.MapScreen})
+
+const AppStack = createBottomTabNavigator(
+    {
+        Events: EventStack,
+        Map: MapStack, 
+        Playlist: PlaylistStack,
+        // tslint:disable-next-line: object-literal-sort-keys
+        Activity: ActivityStack, 
+        Profile: ProfileStack
+    },
+    {
+        defaultNavigationOptions: props => ({
+            headerTitleStyle: {
+                fontFamily: 'Roboto',
+            },
+            tabBarIcon: ({ focused, horizontal, tintColor }) => {
+                const { routeName } = props.navigation.state;
+                return <IconComponent name={`md-${Icons[routeName]}`} size={25} />
+            },
+        }),
+        initialRouteName:'Events',
+
+    }
+);
 
 export default AppStack

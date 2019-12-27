@@ -1,6 +1,9 @@
+import faker from 'faker';
 import React from 'react';
-import { Text, View, Button} from "react-native";
+import { Text, View, Button, FlatList, StyleSheet} from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
+import { EventListItem } from '../Event';
+
 
 
 // tslint:disable-next-line: interface-name
@@ -8,14 +11,20 @@ interface EventsScreenProps {
     navigation: NavigationStackProp<{name: string}>
 }
 
-// const styles = 
-
 const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props => {
     const { navigate } = props.navigation;
     return(
         <View>
-            <Text>This is the events screen</Text>
-            <Button title="Go To A Event" onPress={()=>{navigate('Event')}}/>
+            <FlatList
+                data={Array.from({length: 10}, (_, id)=>({
+                    date: faker.date.future(),
+                    image: faker.image.avatar(),
+                    key: faker.name.findName(), 
+                    location: faker.address.streetAddress(true), 
+                }))}
+                renderItem={({item}) => <EventListItem title={item.key} location={item.location} date={item.date} image={item.image}/>}
+            />
+            
         </View>
     )
 
@@ -24,5 +33,19 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
 EventsScreen.navigationOptions = {
     title: 'Events',
 }
+
+const styles = StyleSheet.create({
+    container: {
+     flex: 1,
+     paddingTop: 22
+    },
+    item: {
+      padding: 10,
+      fontSize: 18,
+      height: 44,
+    },
+})
+    
+    
 
 export default EventsScreen;
