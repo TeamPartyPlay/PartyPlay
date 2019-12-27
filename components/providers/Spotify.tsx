@@ -10,8 +10,8 @@ const scopes = scopesArr.join(' ');
 
 const SpotifyContextDefaultValues = {
     accessToken: '',
-    getAuthorizationCode: () => console.log("default"),
-    refreshTokens: () => console.log("default"),
+    getAuthorizationCode: async () : Promise<void> => null,
+    refreshTokens: async () : Promise<void> => null,
 }
 
 const SpotifyContext = createContext(SpotifyContextDefaultValues);
@@ -19,8 +19,6 @@ const SpotifyContext = createContext(SpotifyContextDefaultValues);
 interface SpotifyProps {
     children?: ReactNode,
 }
-
-const findInStorage = (async (key: string) => await AsyncStorage.getItem(key));
 
 const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
     const [clientId, setClientId] = useState(cId);
@@ -53,7 +51,7 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
 
     const getTokens = async () : Promise<{accessToken: string, refreshToken: string, expiration: string }> => {
         if(accessToken && refreshToken && expiration) {
-            console.log(accessToken, refreshToken, expiration)
+            // console.log(accessToken, refreshToken, expiration)
             return {accessToken, refreshToken, expiration}
         } else {
             const encodedClient = encode(`${clientId}:${clientSecret}`);
@@ -78,11 +76,12 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
             return {accessToken: access_token, refreshToken: refresh_token, expiration: expires_in}
         }
     }
-    const refreshTokens = async () => {
+    
+    const refreshTokens = async () : Promise<void> => {
         return null;
     }
     
-    const getAuthorizationCode = async () => {
+    const getAuthorizationCode = async () : Promise<void> => {
         try {
             const result = await AuthSession.startAsync({
               authUrl:
@@ -103,13 +102,9 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
             console.error(err)
           }
     }
-    useEffect(() => {
-        return () => {
-            //AsyncStorage.setItem()
-        }
-    }, []);
+
     return(
-        <SpotifyContext.Provider value={({ refreshTokens, getAuthorizationCode, accessToken})}>
+        <SpotifyContext.Provider value={({ refreshTokens, getAuthorizationCode, accessToken })}>
             {children}
         </SpotifyContext.Provider>
     )
