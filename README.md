@@ -9,6 +9,10 @@ This is the repository for the Party Play Application
 3. `yarn add`
 4. `yarn start`
 
+### Secrets
+
+Spotify API requires a `clientId` and `clientSercet` which is storage in `secret.js` at the moment. This will be changed once the server is completed.
+
 ## Other Notes
 
 [Working With Images](https://medium.com/the-react-native-log/tips-for-react-native-images-or-saying-goodbye-to-trial-and-error-b2baaf0a1a4d)
