@@ -5,6 +5,7 @@ import {
     NavigationStackScreenComponent 
 } from "react-navigation-stack";
 import { SpotifyContext, PlayerContext } from '../providers';
+import { MusicControl } from '../providers/Player';
 
 // tslint:disable-next-line: interface-name
 interface Props {
@@ -26,6 +27,8 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
             <Button title="Skip Song" onPress={()=>spotify.skipToNext()} />
             <Button title="Previous Song" onPress={()=>spotify.skipToPrevious()} />
             <Button title="Refresh Tokens" onPress={refreshTokens} />
+
+            <MusicControl />
 
             {!spotify.getAccessToken() && <SpotifyButton />}
         </>

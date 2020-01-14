@@ -2,8 +2,16 @@ import { encode } from 'base-64';
 import { AuthSession } from "expo";
 import React, { createContext, FC, ReactNode, useEffect, useState } from "react";
 import { AsyncStorage } from "react-native";
-import SpotifyWebApi from 'spotify-web-api-js';
 import { cId, cSecret, rUri } from '../../secret';
+import SpotifyWebApi from 'spotify-web-api-js';
+
+interface SpotifyContextProps {
+    accessToken: string,
+    refreshToken: string,
+    spotify: SpotifyWebApi.SpotifyWebApiJs,
+    refresh: () =>  Promise<void>,
+    getAuthorizationCode: () => Promise<void>,
+}
 
 
 const scopesArr = ['user-modify-playback-state','user-read-currently-playing','user-read-playback-state','user-library-modify',
@@ -13,14 +21,7 @@ const scopes = scopesArr.join(' ');
 
 const spotify = new SpotifyWebApi();
 
-const SpotifyContextDefaultValues = {
-    accessToken: '',
-    spotify,
-    getAuthorizationCode: async () : Promise<void> => null,
-    refreshTokens: async () : Promise<void> => null,
-}
-
-const SpotifyContext = createContext(SpotifyContextDefaultValues);
+const SpotifyContext = createContext<SpotifyContextProps>(null);
 
 // tslint:disable-next-line: interface-name
 interface SpotifyProps {
@@ -82,7 +83,7 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
     }, [expiration]);
 
     useEffect(() => {
-        refreshTokens();
+        refresh();
     }, [expiration < (new Date()).toISOString()]);
 
 
@@ -102,7 +103,7 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
 
     const getTokens = async () : Promise<void> => {
         if(accessToken && refreshToken && expiration) {
-            refreshTokens();
+            refresh();
         } else {
             const encodedClient = encode(`${clientId}:${clientSecret}`);
             const response = await fetch('https://accounts.spotify.com/api/token',{
@@ -119,7 +120,7 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
             const Expiration = new Date (new Date().getTime() + expires_in * 1000);
             if (error) {
                 if(access_token && refresh_token && expires_in){
-                    refreshTokens();
+                    refresh();
                 }
             } else {
                 // console.log(access_token, refresh_token, expires_in, error);
@@ -130,7 +131,7 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
         }
     }
 
-    const refreshTokens = async () : Promise<void> => {
+    const refresh = async () : Promise<void> => {
         console.log("Refreshing Tokens");
         try {
             const encodedClient = encode(`${clientId}:${clientSecret}`);
@@ -181,7 +182,7 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
     }
 
     return(
-        <SpotifyContext.Provider value={({ refreshTokens, getAuthorizationCode, accessToken, spotify })}>
+        <SpotifyContext.Provider value={{ refresh, accessToken, refreshToken, spotify, getAuthorizationCode }}>
             {children}
         </SpotifyContext.Provider>
     )
