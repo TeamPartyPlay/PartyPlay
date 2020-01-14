@@ -49,7 +49,7 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
         ];
         Promise.all(promises).then(res => {
             const [AccessToken, RefreshToken, Expiration, AuthCode] = res;
-            console.log(res);
+            // console.log({res});
             setAccessToken(AccessToken);
             setRefreshToken(RefreshToken);
             setExpiration(Expiration);
@@ -67,12 +67,14 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
     }, [accessToken]);
 
     useEffect(() => {
+        console.log("Refresh Token: ", refreshToken);
         if(refreshToken) {
             AsyncStorage.setItem('refreshToken', refreshToken);
         }
     }, [refreshToken]);
 
     useEffect(() => {
+        console.log("Expiration Use Effect")
         console.log(expiration < (new Date()).toISOString());
         if(expiration) {
             AsyncStorage.setItem('expiration', expiration);
@@ -85,20 +87,22 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
 
 
     useEffect(()=>{
+        console.log("Auth Code Use Effect");
+        console.log(authCode && !accessToken && !refreshToken && !expiration);
         if (authCode && !accessToken && !refreshToken && !expiration){
-            getTokens()
+            getTokens();
         }
     }, [authCode])
 
     const removeTokens = () => {
-        AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'expiration', 'authCode'])
+        console.log("Removing Spotify Tokens");
+        spotify.setAccessToken(null);
+        AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'expiration', 'authCode']);
     }
 
-    const getTokens = async () : Promise<{accessToken: string, refreshToken: string, expiration: string }> => {
-        console.log("Get Tokens");
+    const getTokens = async () : Promise<void> => {
         if(accessToken && refreshToken && expiration) {
-            // console.log(accessToken, refreshToken, expiration)
-            return {accessToken, refreshToken, expiration}
+            refreshTokens();
         } else {
             const encodedClient = encode(`${clientId}:${clientSecret}`);
             const response = await fetch('https://accounts.spotify.com/api/token',{
@@ -114,19 +118,20 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
             const {access_token, refresh_token, expires_in, error} = await response.json();
             const Expiration = new Date (new Date().getTime() + expires_in * 1000);
             if (error) {
-                removeTokens();
+                if(access_token && refresh_token && expires_in){
+                    refreshTokens();
+                }
             } else {
-                console.log(access_token, refresh_token, expires_in, error);
+                // console.log(access_token, refresh_token, expires_in, error);
                 setAccessToken(access_token);
                 setRefreshToken(refresh_token);
                 setExpiration(Expiration.toISOString());
             }
-            
-            return {accessToken: access_token, refreshToken: refresh_token, expiration: expires_in}
         }
     }
 
     const refreshTokens = async () : Promise<void> => {
+        console.log("Refreshing Tokens");
         try {
             const encodedClient = encode(`${clientId}:${clientSecret}`);
             const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -138,14 +143,13 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
               body: `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=${clientId}&client_secret=${clientSecret}`,
             });
             
-            const {access_token, refresh_token, expires_in, error} = await response.json();
-            console.log(access_token, refresh_token, expires_in, error);
+            const {access_token, expires_in, error} = await response.json();
+            // console.log(access_token, expires_in, error);
             if (error) {
-                getTokens()
+                getTokens();
             } else {
                 const Expiration = new Date (new Date().getTime() + expires_in * 1000);
                 setAccessToken(access_token);
-                setRefreshToken(refresh_token);
                 setExpiration(Expiration.toISOString());
             }
             

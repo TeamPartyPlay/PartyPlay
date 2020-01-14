@@ -4,11 +4,7 @@ import {
     NavigationStackProp,
     NavigationStackScreenComponent 
 } from "react-navigation-stack";
-import { SpotifyContext } from '../providers';
-import SpotifyWebApi from 'spotify-web-api-js';
-
-
-
+import { SpotifyContext, PlayerContext } from '../providers';
 
 // tslint:disable-next-line: interface-name
 interface Props {
@@ -16,18 +12,20 @@ interface Props {
 }
 
 const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
-    const {spotify} = useContext(SpotifyContext);
+    const {spotify, refreshTokens} = useContext(SpotifyContext);
+    const {play, pause} = useContext(PlayerContext);
     const {navigate} = props.navigation;
 
     return(
         <>
-            <Button title="Play" onPress={()=> {
-                    spotify.play().then((value) => console.log(value)).catch(err => console.log(err));
-                }
-            } />
-            <Button title="Pause" onPress={()=>spotify.pause()} />
+            {/*
+                The Play and Pause feature requires a target device if there is no current device
+            */}
+            <Button title="Play" onPress={play} />
+            <Button title="Pause" onPress={pause} />
             <Button title="Skip Song" onPress={()=>spotify.skipToNext()} />
             <Button title="Previous Song" onPress={()=>spotify.skipToPrevious()} />
+            <Button title="Refresh Tokens" onPress={refreshTokens} />
 
             {!spotify.getAccessToken() && <SpotifyButton />}
         </>

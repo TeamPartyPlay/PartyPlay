@@ -1,3 +1,10 @@
+import { PlayerContext, PlayerProvider } from './Player';
 import { SpotifyContext, SpotifyProvider } from "./Spotify";
 
-export {SpotifyContext, SpotifyProvider};
+
+export {
+    PlayerContext, 
+    PlayerProvider, 
+    SpotifyContext, 
+    SpotifyProvider 
+};
