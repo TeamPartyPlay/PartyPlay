@@ -4,8 +4,8 @@ import {
     NavigationStackProp,
     NavigationStackScreenComponent 
 } from "react-navigation-stack";
-import { SpotifyContext, PlayerContext } from '../providers';
-import { MusicControl } from '../providers/Player';
+import { SpotifyContext, PlayerContext } from '../providers/Spotify';
+import { MusicControl } from '../providers/Spotify/Player';
 import { Ionicons } from '@expo/vector-icons';
 
 // tslint:disable-next-line: interface-name

@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, FC, useContext, useEffect, useState } from "react";
-import { SpotifyContext } from "./Spotify";
+import { SpotifyContext } from ".";
 import { AsyncStorage, View, Button } from "react-native";
 import SpotifyWebApi from "spotify-web-api-js";
 import { Ionicons } from '@expo/vector-icons';
