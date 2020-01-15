@@ -15,6 +15,7 @@ interface PlayerContextProps {
     next: () => Promise<void>,
     previous: () => Promise<void>,
     devices: () => Promise<SpotifyApi.UserDevicesResponse>,
+    isPlaying: boolean,
 }
 
 // tslint:disable-next-line: interface-name
@@ -28,12 +29,17 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
     const {spotify} = useContext(SpotifyContext);
     const [userId, setUserId] = useState(null);
     const [device, setDevice] = useState(null);
-    const [context, setContext] = useState("");
-    const [progress, setProgress] = useState(-1);
-    const [offset, setOffset] = useState(null);
+    // const [context, setContext] = useState("");
+    // const [progress, setProgress] = useState(-1);
+    // const [offset, setOffset] = useState(null);
+    const [isPlaying, setIsPlaying] = useState<boolean>(null);
 
     useEffect(()=>{
         if(spotify.getAccessToken()){
+            spotify.getMyCurrentPlaybackState()
+            .then(currentPlaybackState => {
+                setIsPlaying(currentPlaybackState.is_playing);
+            })
             AsyncStorage.getItem('currentDevice').then(value => {
                 if(value){
                     setDevice(value);
@@ -51,22 +57,19 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
     const pause = async () => {
         const currentPlaybackState = await spotify.getMyCurrentPlaybackState();
         console.log("Pausing Music...", currentPlaybackState.context);
-        if (currentPlaybackState.context){
-            setContext(currentPlaybackState.context.uri);
-            setProgress(currentPlaybackState.progress_ms);   
-            setOffset(null);
-        } else {
-           setContext(currentPlaybackState.item.album.uri);
-           setProgress(currentPlaybackState.item.duration_ms);
-           // setOffset(currentPlaybackState.item.track_number);
-        }
         setDevice(currentPlaybackState.device.id);
         
-        spotify.pause();
+        spotify.pause()
+        .then(()=>setIsPlaying(false));
     }
 
     const play = async () => {
-        spotify.play({context_uri: context, device_id: device, position_ms: progress});
+        spotify.play({
+            // context_uri: context, 
+            device_id: device, 
+            // position_ms: progress
+        })
+        .then(()=>setIsPlaying(true));
     }
     return(
         <PlayerContext.Provider value={{
@@ -75,7 +78,8 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
             pause, 
             devices: spotify.getMyDevices, 
             next: spotify.skipToNext, 
-            previous: spotify.skipToPrevious
+            previous: spotify.skipToPrevious,
+            isPlaying
         }}>
             {children}
         </PlayerContext.Provider>
@@ -84,13 +88,16 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
 
 const MusicControl: React.FC<SpotifyProps> = ({children}) => {
     const player = useContext(PlayerContext);
-    const [isPlaying, setIsPlaying] = useState(player.spotify)
     return(
-        <View>
-            <IconComponent name="md-play" size={25} />
-            <IconComponent name="md-pause" size={25} />
-            <IconComponent name="md-skip-forward" size={25} />
-            <IconComponent name="md-skip-backward" size={25} />
+        <View style={{flexDirection: "row", justifyContent: 'space-around'}}>
+            <IconComponent name="md-skip-backward" size={25} onPress={player.previous}/>
+            {
+                player.isPlaying 
+                ? <IconComponent name="md-pause" size={25} onPress={player.pause} />
+                : <IconComponent name="md-play" size={25} onPress={player.play}/>
+            }
+            <IconComponent name="md-skip-forward" size={25} onPress={player.next}/>
+            
         </View>
     )
 }
