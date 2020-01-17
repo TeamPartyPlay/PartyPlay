@@ -15,18 +15,10 @@ interface Props {
 
 const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
     const {spotify, refresh} = useContext(SpotifyContext);
-    const {play, pause} = useContext(PlayerContext);
     const {navigate} = props.navigation;
 
     return(
         <>
-            {/*
-                The Play and Pause feature requires a target device if there is no current device
-            */}
-            <Button title="Play" onPress={play} />
-            <Button title="Pause" onPress={pause} />
-            <Button title="Skip Song" onPress={()=>spotify.skipToNext()} />
-            <Button title="Previous Song" onPress={()=>spotify.skipToPrevious()} />
             <Button title="Refresh Tokens" onPress={refresh} />
 
             <MusicControl />
