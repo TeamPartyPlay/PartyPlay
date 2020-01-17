@@ -30,9 +30,6 @@ const DeviceProvider: FC<DeviceProviderProps> = ({children}) => {
                     });
                 }
             })
-            spotify.getMyDevices()
-            .then(({devices}) => console.log(devices[0]))
-            .catch(err => console.error(err))
         }
     }, [spotify.getAccessToken()])
     return (

@@ -2,7 +2,7 @@ import { encode } from 'base-64';
 import { AuthSession } from "expo";
 import React, { createContext, FC, ReactNode, useEffect, useState } from "react";
 import { AsyncStorage } from "react-native";
-import { cId, cSecret, rUri } from '../../secret';
+import { cId, cSecret, rUri } from '../../../secret';
 import SpotifyWebApi from 'spotify-web-api-js';
 
 interface SpotifyContextProps {

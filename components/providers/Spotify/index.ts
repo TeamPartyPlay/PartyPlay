@@ -1,5 +1,6 @@
 import { PlayerContext, PlayerProvider } from './Player';
 import { SpotifyContext, SpotifyProvider } from "./Spotify";
+import { DeviceContext, DeviceProvider } from './Device';
 
 
 interface SpotifyProps {
@@ -15,14 +16,18 @@ interface SpotifyProps {
     }
 }
 
-const Spotify: SpotifyProps = null;
-
-Spotify.Provider = SpotifyProvider;
-Spotify.Context = SpotifyContext;
-Spotify.Player = {
-    Provider: PlayerProvider,
-    Context: PlayerContext,
-}
+const Spotify: SpotifyProps = {
+    Context: SpotifyContext,
+    Provider: SpotifyProvider,
+    Player: {
+        Context: PlayerContext,
+        Provider: PlayerProvider,
+    },
+    Device:{
+        Context: DeviceContext,
+        Provider: DeviceProvider,
+    }
+};
 
 
 export {

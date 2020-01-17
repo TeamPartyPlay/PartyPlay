@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, FC, useContext, useEffect, useState } from "react";
-import { SpotifyContext } from ".";
+import { SpotifyContext } from "./Spotify";
 import { AsyncStorage, View, Button, Image, Text } from "react-native";
 import SpotifyWebApi from "spotify-web-api-js";
 import { Ionicons } from '@expo/vector-icons';
@@ -88,10 +88,10 @@ const MusicControl: React.FC<SpotifyProps> = ({children}) => {
     return(
         <View>
             {/**
-             * Album Art, Artist, Song Name
-             */}
+              * Album Art, Artist, Song Name
+              */}
             <View>
-                <Image style={{width: 50, height: 50}} source={{uri: './assets/codepen.jpg'}}/>
+                <Image style={{width: 250, height: 250}} source={{uri: player.album.images[0].url}}/>
                 <Text>{player.artists.map(el => el.name).join(', ')}</Text>
                 <Text>{player.song}</Text>
             </View>
