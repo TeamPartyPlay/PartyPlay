@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, FC, useContext, useEffect, useState } from "react";
 import { SpotifyContext } from ".";
-import { AsyncStorage, View, Button } from "react-native";
+import { AsyncStorage, View, Button, Image, Text } from "react-native";
 import SpotifyWebApi from "spotify-web-api-js";
 import { Ionicons } from '@expo/vector-icons';
 import { DeviceContext } from "./Device";
@@ -15,6 +15,9 @@ interface PlayerContextProps {
     pause: () => Promise<void>,
     next: () => Promise<void>,
     previous: () => Promise<void>,
+    album: SpotifyApi.AlbumObjectSimplified,
+    artists: SpotifyApi.ArtistObjectSimplified[],
+    song: string,
     isPlaying: boolean,
 }
 
@@ -30,12 +33,18 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
     const {currentDevice, setCurrentDevice} = useContext(DeviceContext);
     const [userId, setUserId] = useState(null);
     const [isPlaying, setIsPlaying] = useState<boolean>(null);
+    const [artists, setArtists] = useState<SpotifyApi.ArtistObjectSimplified[]>(null);
+    const [album, setAlbum] = useState<SpotifyApi.AlbumObjectSimplified>(null);
+    const [song, setSong] = useState<string>(null);
 
     useEffect(()=>{
         if(spotify.getAccessToken()){
             spotify.getMyCurrentPlaybackState()
             .then(currentPlaybackState => {
                 setIsPlaying(currentPlaybackState.is_playing);
+                setArtists(currentPlaybackState.item.artists);
+                setAlbum(currentPlaybackState.item.album);
+                setSong(currentPlaybackState.item.name);
             })
         }
     }, [spotify.getAccessToken()]);
@@ -44,7 +53,6 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
         const currentPlaybackState = await spotify.getMyCurrentPlaybackState();
         console.log("Pausing Music...", currentPlaybackState.context);
         setCurrentDevice(currentPlaybackState.device.id);
-        
         spotify.pause()
         .then(()=>setIsPlaying(false));
     }
@@ -64,7 +72,10 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
             pause, 
             next: spotify.skipToNext, 
             previous: spotify.skipToPrevious,
-            isPlaying
+            isPlaying,
+            album,
+            artists,
+            song,
         }}>
             {children}
         </PlayerContext.Provider>
@@ -73,11 +84,17 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
 
 const MusicControl: React.FC<SpotifyProps> = ({children}) => {
     const player = useContext(PlayerContext);
+
     return(
         <View>
             {/**
              * Album Art, Artist, Song Name
              */}
+            <View>
+                <Image style={{width: 50, height: 50}} source={{uri: './assets/codepen.jpg'}}/>
+                <Text>{player.artists.map(el => el.name).join(', ')}</Text>
+                <Text>{player.song}</Text>
+            </View>
 
             <View style={{flexDirection: "row", justifyContent: 'space-around'}}>
                 <IconComponent name="md-skip-backward" size={25} onPress={player.previous}/>
