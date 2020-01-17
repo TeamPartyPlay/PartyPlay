@@ -4,6 +4,7 @@ import React, { createContext, FC, ReactNode, useEffect, useState } from "react"
 import { AsyncStorage } from "react-native";
 import { cId, cSecret, rUri } from '../../../secret';
 import SpotifyWebApi from 'spotify-web-api-js';
+import { useInterval } from '../../hooks';
 
 interface SpotifyContextProps {
     accessToken: string,
@@ -32,13 +33,13 @@ interface SpotifyProps {
  * a user will be able to login and use the Spotify API.
  */
 const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
-    const [clientId, setClientId] = useState(cId);
-    const [clientSecret, setClientSecret] = useState(cSecret);
-    const [redirectUri, setRedirectUri ] = useState(rUri ? rUri : AuthSession.getRedirectUrl())
-    const [authCode, setAuthCode] = useState(null);
-    const [accessToken, setAccessToken] = useState(null);
-    const [refreshToken, setRefreshToken] = useState(null);
-    const [expiration, setExpiration] = useState(null);
+    const [clientId, setClientId] = useState<string>(cId);
+    const [clientSecret, setClientSecret] = useState<string>(cSecret);
+    const [redirectUri, setRedirectUri ] = useState<string>(rUri ? rUri : AuthSession.getRedirectUrl())
+    const [authCode, setAuthCode] = useState<string>(null);
+    const [accessToken, setAccessToken] = useState<string>(null);
+    const [refreshToken, setRefreshToken] = useState<string>(null);
+    const [expiration, setExpiration] = useState<string>(null);
 
     useEffect(() => {
         const promises: Array<Promise<string>> = [
