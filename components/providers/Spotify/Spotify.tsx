@@ -5,6 +5,7 @@ import { AsyncStorage } from "react-native";
 import { cId, cSecret, rUri } from '../../../secret';
 import SpotifyWebApi from 'spotify-web-api-js';
 
+// tslint:disable-next-line: interface-name
 interface SpotifyContextProps {
     accessToken: string,
     refreshToken: string,
@@ -13,7 +14,7 @@ interface SpotifyContextProps {
     getAuthorizationCode: () => Promise<void>,
 }
 
-const scopesArr: Array<string> = ['user-modify-playback-state','user-read-currently-playing','user-read-playback-state','user-library-modify',
+const scopesArr: string[] = ['user-modify-playback-state','user-read-currently-playing','user-read-playback-state','user-library-modify',
                    'user-library-read','playlist-read-private','playlist-read-collaborative','playlist-modify-public',
                    'playlist-modify-private','user-read-recently-played','user-top-read'];
 const scopes = scopesArr.join(' ');
@@ -45,15 +46,16 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
             AsyncStorage.getItem('accessToken'), 
             AsyncStorage.getItem('refreshToken'),
             AsyncStorage.getItem('expiration'), 
-            AsyncStorage.getItem('authCode')
         ];
         Promise.all(promises).then(res => {
-            const [AccessToken, RefreshToken, Expiration, AuthCode] = res;
-            // console.log({res});
-            setAccessToken(AccessToken);
-            setRefreshToken(RefreshToken);
-            setExpiration(Expiration);
-            setAuthCode(AuthCode);
+            const [AccessToken, RefreshToken, Expiration] = res;
+            if(new Date(expiration) < new Date()){
+                setRefreshToken(RefreshToken);
+            } else {
+                setAccessToken(AccessToken);
+                setRefreshToken(RefreshToken);
+                setExpiration(Expiration)
+            }
         });
 
     }, []);
@@ -70,12 +72,13 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
         console.log("Refresh Token: ", refreshToken);
         if(refreshToken) {
             AsyncStorage.setItem('refreshToken', refreshToken);
+            if(!accessToken && !expiration){
+                refresh();
+            }
         }
     }, [refreshToken]);
 
     useEffect(() => {
-        console.log("Expiration Use Effect")
-        console.log(expiration < (new Date()).toISOString());
         if(expiration) {
             AsyncStorage.setItem('expiration', expiration);
         }
@@ -83,7 +86,7 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
 
     useEffect(() => {
         refresh();
-    }, [expiration < (new Date()).toISOString()]);
+    }, [new Date(expiration) < new Date()]);
 
 
     useEffect(()=>{
@@ -95,7 +98,6 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
     }, [authCode])
 
     const removeTokens = () => {
-        console.log("Removing Spotify Tokens");
         spotify.setAccessToken(null);
         AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'expiration', 'authCode']);
     }
@@ -122,7 +124,6 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
                     refresh();
                 }
             } else {
-                // console.log(access_token, refresh_token, expires_in, error);
                 setAccessToken(access_token);
                 setRefreshToken(refresh_token);
                 setExpiration(Expiration.toISOString());
@@ -173,7 +174,6 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
             if (result.type === 'success'){
                 const { code } = result.params;
                 setAuthCode(code);
-                AsyncStorage.setItem('authCode', code);
             }
           } catch (err) {
             console.error(err)

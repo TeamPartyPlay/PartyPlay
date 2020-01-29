@@ -15,10 +15,7 @@ interface PlayerContextProps {
     pause: () => Promise<void>,
     next: () => Promise<void>,
     previous: () => Promise<void>,
-    album: SpotifyApi.AlbumObjectSimplified,
-    artists: SpotifyApi.ArtistObjectSimplified[],
-    song: string,
-    isPlaying: boolean,
+    playbackState: SpotifyApi.CurrentPlaybackResponse
 }
 
 // tslint:disable-next-line: interface-name
@@ -31,38 +28,44 @@ const PlayerContext = createContext<PlayerContextProps>(null);
 const PlayerProvider: FC<SpotifyProps> = ({children}) => {
     const {spotify} = useContext(SpotifyContext);
     const {currentDevice, setCurrentDevice} = useContext(DeviceContext);
-    const [userId, setUserId] = useState(null);
-    const [isPlaying, setIsPlaying] = useState<boolean>(null);
     const [artists, setArtists] = useState<SpotifyApi.ArtistObjectSimplified[]>(null);
     const [album, setAlbum] = useState<SpotifyApi.AlbumObjectSimplified>(null);
     const [song, setSong] = useState<string>(null);
+    const [playbackState, setPlaybackState] = useState<SpotifyApi.CurrentPlaybackResponse>(null);
 
     useEffect(()=>{
         if(spotify.getAccessToken()){
             spotify.getMyCurrentPlaybackState()
             .then(currentPlaybackState => {
-                setIsPlaying(currentPlaybackState.is_playing);
-                setArtists(currentPlaybackState.item.artists);
-                setAlbum(currentPlaybackState.item.album);
-                setSong(currentPlaybackState.item.name);
+                setPlaybackState(currentPlaybackState);
             })
+            .catch(err => console.error(err))
         }
     }, [spotify.getAccessToken()]);
 
     const pause = async () => {
         const currentPlaybackState = await spotify.getMyCurrentPlaybackState();
-        console.log("Pausing Music...", currentPlaybackState.context);
         setCurrentDevice(currentPlaybackState.device.id);
-        spotify.pause()
-        .then(()=>setIsPlaying(false));
+        await spotify.pause();
+        setPlaybackState(await spotify.getMyCurrentPlaybackState());
     }
 
     const play = async () => {
-        spotify.play({
-            device_id: currentDevice, 
+        await spotify.play({
+            device_id: playbackState.device.id, 
         })
-        .then(()=>setIsPlaying(true))
-        .catch(err =>  console.error(err));
+        setPlaybackState(await spotify.getMyCurrentPlaybackState());
+    }
+    
+    const next = async () => {
+        await spotify.skipToNext();
+        setPlaybackState(await spotify.getMyCurrentPlaybackState());
+
+    }
+
+    const previous = async () => {
+        await spotify.skipToPrevious();
+        setPlaybackState(await spotify.getMyCurrentPlaybackState());
     }
 
     return(
@@ -70,12 +73,9 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
             spotify, 
             play, 
             pause, 
-            next: spotify.skipToNext, 
-            previous: spotify.skipToPrevious,
-            isPlaying,
-            album,
-            artists,
-            song,
+            next, 
+            previous,
+            playbackState,
         }}>
             {children}
         </PlayerContext.Provider>
@@ -83,27 +83,28 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
 }
 
 const MusicControl: React.FC<SpotifyProps> = ({children}) => {
-    const player = useContext(PlayerContext);
+    const {next, playbackState, previous, pause, play} = useContext(PlayerContext);
 
     return(
         <View>
-            {/**
-              * Album Art, Artist, Song Name
-              */}
-            <View>
-                <Image style={{width: 250, height: 250}} source={{uri: player.album.images[0].url}}/>
-                <Text>{player.artists.map(el => el.name).join(', ')}</Text>
-                <Text>{player.song}</Text>
-            </View>
+              <View>{
+                playbackState && playbackState.item &&
+                <>
+                    <Image style={{width: 250, height: 250}} source={{uri: playbackState.item.album.images[0].url}}/>
+                    <Text>{playbackState.item.artists.map(el => el.name).join(', ')}</Text>
+                    <Text>{playbackState.item.name}</Text>
+                </>
+              }</View>
+
 
             <View style={{flexDirection: "row", justifyContent: 'space-around'}}>
-                <IconComponent name="md-skip-backward" size={25} onPress={player.previous}/>
+                <IconComponent name="md-skip-backward" size={25} onPress={previous}/>
                 {
-                    player.isPlaying 
-                    ? <IconComponent name="md-pause" size={25} onPress={player.pause} />
-                    : <IconComponent name="md-play" size={25} onPress={player.play}/>
+                    playbackState.is_playing 
+                    ? <IconComponent name="md-pause" size={25} onPress={pause} />
+                    : <IconComponent name="md-play" size={25} onPress={play}/>
                 }
-                <IconComponent name="md-skip-forward" size={25} onPress={player.next}/>    
+                <IconComponent name="md-skip-forward" size={25} onPress={next}/>    
             </View>
         </View>
     )
