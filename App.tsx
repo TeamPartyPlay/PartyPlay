@@ -1,10 +1,15 @@
 import React from 'react';
 import MainNavigator from "./components/navigation";
-import { SpotifyProvider } from "./components/providers";
+import { SpotifyProvider, PlayerProvider } from "./components/providers/Spotify";
+import { DeviceProvider } from './components/providers/Spotify/Device';
 
 const App = props => (
     <SpotifyProvider >
-        <MainNavigator />
+        <DeviceProvider>
+            <PlayerProvider>
+                <MainNavigator />
+            </PlayerProvider> 
+        </DeviceProvider>
     </SpotifyProvider>  
 );
 

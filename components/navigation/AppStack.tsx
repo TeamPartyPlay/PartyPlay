@@ -41,7 +41,7 @@ const AppStack = createBottomTabNavigator(
             },
             tabBarIcon: ({ focused, horizontal, tintColor }) => {
                 const { routeName } = props.navigation.state;
-                return <IconComponent name={`md-${Icons[routeName]}`} size={25} />
+                return <IconComponent name={`md-${Icons[routeName]}`} size={25} color={focused ? 'blue' : 'black' } />
             },
         }),
         initialRouteName:'Events',
