@@ -30,7 +30,6 @@ PlaylistScreen.navigationOptions = () => {
         title: "Playlist"
     })
 }
-
 const SpotifyButton = props => {
     const {getAuthorizationCode} = useContext(SpotifyContext);
     return(
