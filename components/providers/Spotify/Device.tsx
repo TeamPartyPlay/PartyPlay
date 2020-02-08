@@ -31,7 +31,7 @@ const DeviceProvider: FC<DeviceProviderProps> = ({children}) => {
                 }
             })
         }
-    }, [spotify.getAccessToken()])
+    }, [spotify, spotify.getAccessToken()])
     return (
         <DeviceContext.Provider value={{
             devices: spotify.getMyDevices,

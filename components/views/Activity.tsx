@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, AsyncStorage } from "react-native";
+import { AsyncStorage, Button, View } from "react-native";
 import { 
     NavigationStackProp,
     NavigationStackScreenComponent 
