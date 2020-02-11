@@ -12,6 +12,7 @@ const Icons = {
     Activity: "notifications",
     Playlist: "musical-notes",
     Events: "calendar",
+    Vote: "thumbs-up",
     Map: "map"
 }
 
@@ -23,6 +24,8 @@ const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen});
 
 const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.EventScreen});
 
+const VoteStack = createStackNavigator({Vote: View.VoteScreen})
+
 const MapStack = createStackNavigator({Map: View.MapScreen})
 
 const AppStack = createBottomTabNavigator(
@@ -30,6 +33,7 @@ const AppStack = createBottomTabNavigator(
         Events: EventStack,
         Map: MapStack, 
         Playlist: PlaylistStack,
+        Vote: VoteStack,
         // tslint:disable-next-line: object-literal-sort-keys
         Activity: ActivityStack, 
         Profile: ProfileStack
