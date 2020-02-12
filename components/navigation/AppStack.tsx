@@ -31,7 +31,7 @@ const MapStack = createStackNavigator({Map: View.MapScreen})
 const AppStack = createBottomTabNavigator(
     {
         Events: EventStack,
-        Map: MapStack, 
+        // Map: MapStack, 
         Playlist: PlaylistStack,
         Vote: VoteStack,
         // tslint:disable-next-line: object-literal-sort-keys
