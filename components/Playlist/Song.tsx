@@ -3,11 +3,13 @@ import { Text, View, Button } from 'react-native';
 import SpotifyWebApi from 'spotify-web-api-js';
 import { SpotifyContext } from '../providers';
 
+// tslint:disable-next-line: interface-name
 interface SongsProps {
-
+    song: SpotifyApi.TrackObjectFull
 }
 
-const Song: React.FC<SongsProps> = () => {
+const Song: React.FC<SongsProps> = ({song}) => {
+
     const {spotify} = useContext(SpotifyContext)
 
     const createPlaylist = () => {
@@ -24,8 +26,11 @@ const Song: React.FC<SongsProps> = () => {
         }
     }
     return(
-        <Button onPress={createPlaylist} title={"Create Playlist"} />
-    )
+        <View>
+            <Text>{song.name}</Text>
+            <Button onPress={createPlaylist} title={"Create Playlist"} />
+        </View>
+    );
 }
 
 export default Song;
