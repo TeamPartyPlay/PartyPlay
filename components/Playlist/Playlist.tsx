@@ -1,5 +1,5 @@
 import React, { useState, useContext, createRef } from 'react'; 
-import { Button, View } from 'react-native';
+import { Button, View, Modal } from 'react-native';
 import { Input, Overlay } from 'react-native-elements';
 import { PlaylistContext } from '../providers/Spotify';
 import Song from './Song';
@@ -37,19 +37,19 @@ const CreatePlaylistOverlay: React.FC<CreatePlaylistOverlayProps> = ({visible, s
     const inputDescription = createRef<Input>();
 
     const onSubmit = () => {
-        createPlaylist({name, description, public: false, collaborative: false});
+        //createPlaylist({name, description, public: false, collaborative: false});
         setVisible(false);
     }
 
     return(
-        <Overlay isVisible={visible}>
+        <Modal visible={visible}>
             <View>
                 <Input ref={inputName} placeholder="Name" label="Name" />
                 <Input ref={inputDescription} placeholder="Description" label="Description"/>
                 <Button onPress={onSubmit} title="Submit"/>
                 <Button onPress={() => setVisible(false)} title="Clear" />
             </View>
-        </Overlay>
+        </Modal>
         
     )
 }
