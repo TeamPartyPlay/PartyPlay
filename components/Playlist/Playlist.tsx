@@ -43,12 +43,12 @@ const CreatePlaylistOverlay: React.FC<CreatePlaylistOverlayProps> = ({visible, s
 
     return(
         <Overlay isVisible={visible}>
-            <>
+            <View>
                 <Input ref={inputName} placeholder="Name" label="Name" />
                 <Input ref={inputDescription} placeholder="Description" label="Description"/>
                 <Button onPress={onSubmit} title="Submit"/>
                 <Button onPress={() => setVisible(false)} title="Clear" />
-            </>
+            </View>
         </Overlay>
         
     )

@@ -24,8 +24,11 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
             <MusicControl />
             {!spotify.getAccessToken() && <SpotifyButton />}
             <Playlist />
+            
+            {/*
             <Button title ="Create Playlist" onPress={()=> {setVisible(!visible)}} />
             <CreatePlaylistOverlay visible={visible} setVisible={setVisible}/>
+            */}
         </>
     )
 }

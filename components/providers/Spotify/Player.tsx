@@ -82,18 +82,14 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
 const MusicControl: React.FC<SpotifyProps> = ({children}) => {
     const {next, playbackState, previous, pause, play} = useContext(PlayerContext);
     return(
-        <View>
-              <View>{
-                (playbackState && playbackState.item) ?
-                <>
+        <View style={{flex: 1, flexDirection: 'column', alignContent: 'stretch'}}>
+              {(playbackState && playbackState.item) ?
+                <View style={{flex: 1, flexDirection: 'column', alignContent: 'center'}}>
                     <Image style={{width: 250, height: 250}} source={{uri: playbackState.item.album.images[0].url}}/>
                     <Text>{playbackState.item.artists.map(el => el.name).join(', ')}</Text>
                     <Text>{playbackState.item.name}</Text>
-                </>
-                : <></>
-              }</View>
-
-
+                </View>
+                : <></>}
             <View style={{flexDirection: "row", justifyContent: 'space-around'}}>
                 <IconComponent name="md-skip-backward" size={25} onPress={previous}/>
                 {
