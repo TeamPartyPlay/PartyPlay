@@ -32,7 +32,7 @@ const PlaylistProvider: React.FC<{children?: ReactNode,}> = ({children}) => {
             try {
                 const me = await spotify.getMe();
                 const playlist = await spotify.createPlaylist(me.id, options);
-                AsyncStorage.setItem("currentPlaylist", currentPlaylist.id);
+                AsyncStorage.setItem("currentPlaylist", playlist.id);
                 setCurrentPlaylist(playlist);
             } catch (error) {
                 console.error(error);

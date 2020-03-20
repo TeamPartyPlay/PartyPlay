@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useContext, useState } from 'react';
 import { Button } from "react-native";
 import { 
@@ -7,7 +6,7 @@ import {
 } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
 import { MusicControl } from '../providers/Spotify/Player';
-import { Playlist, CreatePlaylistOverlay } from '../Playlist/Playlist';
+import { Playlist, CreatePlaylistModal } from '../Playlist/Playlist';
 
 
 // tslint:disable-next-line: interface-name
@@ -24,11 +23,11 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
             <MusicControl />
             {!spotify.getAccessToken() && <SpotifyButton />}
             <Playlist />
-            
+            <Button title ="Create Playlist" onPress={()=> {setVisible(!visible)}} />
+            <CreatePlaylistModal visible={visible} setVisible={setVisible}/>
             
             {/*
-            <Button title ="Create Playlist" onPress={()=> {setVisible(!visible)}} />
-            <CreatePlaylistOverlay visible={visible} setVisible={setVisible}/>
+            
             */}
         </>
     )

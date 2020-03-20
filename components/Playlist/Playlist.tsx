@@ -1,8 +1,9 @@
-import React, { useState, useContext, createRef } from 'react'; 
-import { Button, View, Modal } from 'react-native';
-import { Input, Overlay } from 'react-native-elements';
+import React, { useState, useContext } from 'react'; 
+import { Button, View } from 'react-native';
+import { Input } from 'react-native-elements';
 import { PlaylistContext } from '../providers/Spotify';
 import Song from './Song';
+import Modal, { ModalContent, ModalTitle } from 'react-native-modals';
 
 
 const Playlist: React.FC<{}> = () => {
@@ -23,35 +24,50 @@ const Playlist: React.FC<{}> = () => {
 }
 
 // tslint:disable-next-line: interface-name
-interface CreatePlaylistOverlayProps {
+interface CreatePlaylistModalProps {
     visible: boolean,
     setVisible: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-const CreatePlaylistOverlay: React.FC<CreatePlaylistOverlayProps> = ({visible, setVisible}) => {
+const CreatePlaylistModal: React.FC<CreatePlaylistModalProps> = ({visible, setVisible}) => {
     const { createPlaylist } = useContext(PlaylistContext);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
-    const inputName = createRef<Input>();
-    const inputDescription = createRef<Input>();
-
     const onSubmit = () => {
-        //createPlaylist({name, description, public: false, collaborative: false});
+        if(name && description){
+            createPlaylist({name, description, public: false, collaborative: false});
+        }
         setVisible(false);
     }
 
     return(
-        <Modal visible={visible}>
-            <View>
-                <Input ref={inputName} placeholder="Name" label="Name" />
-                <Input ref={inputDescription} placeholder="Description" label="Description"/>
-                <Button onPress={onSubmit} title="Submit"/>
-                <Button onPress={() => setVisible(false)} title="Clear" />
-            </View>
-        </Modal>
-        
-    )
+        <View>
+            <Modal
+                visible={visible}
+                width={0.8}
+                modalTitle={<ModalTitle title="Create Playlist"/>}
+            >
+                
+                <ModalContent>
+                    <Input 
+                        placeholder="Name" 
+                        label="Name" 
+                        value={name} 
+                        onChangeText={text => setName(text)}
+                    />
+                    <Input
+                        placeholder="Description" 
+                        label="Description"
+                        value={description} 
+                        onChangeText={text => setDescription(text)}
+                    />
+                    <Button onPress={onSubmit} title="Submit"/>
+                    <Button onPress={() => setVisible(false)} title="Clear" />
+                </ModalContent>
+            </Modal>
+        </View>
+    );
 }
 
-export {Playlist, CreatePlaylistOverlay};
+export {Playlist, CreatePlaylistModal};

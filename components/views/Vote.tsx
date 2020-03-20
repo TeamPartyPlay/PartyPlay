@@ -1,12 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { Text, View, Modal, Alert, TouchableHighlight, Button, Image, FlatList, StyleSheet } from "react-native";
+import { Text, View, Modal, Button, Image, FlatList, StyleSheet } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
 import { SearchBar } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash';
-import { Icon } from 'expo';
-import { withOrientation } from 'react-navigation';
 
 // tslint:disable-next-line: interface-name
 interface VoteScreenProps {
