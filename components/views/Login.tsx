@@ -14,7 +14,8 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
     const [password, setPassword] = useState<string>("");
 
     const signUp = async () => {
-        navigate('SignUp')
+        
+        navigate('App');
     }
 
     const signIn = async () => {

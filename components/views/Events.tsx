@@ -14,7 +14,7 @@ interface EventsScreenProps {
 const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props => {
     const { navigate } = props.navigation;
     return(
-        <View>
+        <View style={styles.page}>
             <FlatList
                 data={Array.from({length: 10}, (_, id)=>({
                     date: faker.date.future(),
@@ -23,6 +23,7 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
                     location: faker.address.streetAddress(true), 
                 }))}
                 renderItem={({item}) => <EventListItem title={item.key} location={item.location} date={item.date} image={item.image}/>}
+                keyExtractor={item => item.key}
             />
             
         </View>
@@ -36,14 +37,17 @@ EventsScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
     container: {
-     flex: 1,
-     paddingTop: 22
+        flex: 1,
+        paddingTop: 22
     },
     item: {
       padding: 10,
       fontSize: 18,
       height: 44,
     },
+    page: {
+        backgroundColor: "#33333D"
+    }
 })
     
     
