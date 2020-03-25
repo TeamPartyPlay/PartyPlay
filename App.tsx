@@ -8,7 +8,7 @@ const App = props => (
         <DeviceProvider>
             <PlayerProvider>
                 <PlaylistProvider>
-                    <MainNavigator />
+                    <MainNavigator style={{backgroundColor: "black"}}/>
                 </PlaylistProvider>
             </PlayerProvider> 
         </DeviceProvider>

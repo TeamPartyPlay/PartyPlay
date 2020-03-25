@@ -40,6 +40,16 @@ const AppStack = createBottomTabNavigator(
     },
     {
         defaultNavigationOptions: props => ({
+            headerStyle: {
+                backgroundColor: '#28F1A6',
+                elevation: 0,
+                shadowOpacity: 0
+            },
+            header: {
+                style: {
+                  backgroundColor: 'red'
+                }
+            },
             headerTitleStyle: {
                 fontFamily: 'Roboto',
             },
