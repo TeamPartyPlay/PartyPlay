@@ -5,6 +5,7 @@ import { SpotifyContext } from '../providers/Spotify';
 import { SearchBar } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash';
+import ActionBarImage from '../navigation/ActionBarImage';
 
 // tslint:disable-next-line: interface-name
 interface VoteScreenProps {
@@ -156,7 +157,11 @@ const styles = StyleSheet.create({
 })
 
 VoteScreen.navigationOptions = {
-    title: 'Vote Room',
-}
+    headerTitle: <ActionBarImage />,
+    headerStyle:{
+        height: 75,
+        backgroundColor: '#33333D'
+    }
+  }
 
 export default VoteScreen;

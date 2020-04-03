@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { Icon } from 'react-native-elements';
+import ActionBarImage from '../navigation/ActionBarImage';
 
 
 type Props = {
@@ -137,7 +138,11 @@ const ProfileStyles = StyleSheet.create({
 })
   
 ProfileScreen.navigationOptions = {
-  title: 'Profile'
+  headerTitle: <ActionBarImage />,
+  headerStyle:{
+      height: 75,
+      backgroundColor: '#33333D'
+  }
 }
 
 export default ProfileScreen;

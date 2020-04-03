@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { View, Text, Image, StyleSheet, Button, Dimensions} from "react-native"; 
+import { View, Text, Image, StyleSheet, Button, Dimensions, Alert} from "react-native"; 
 import { withNavigation } from 'react-navigation';
 import { NavigationStackProp } from 'react-navigation-stack';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Modal, { ModalContent, ModalTitle, BottomModal, ModalButton } from 'react-native-modals';
 
 // tslint:disable-next-line: interface-name
@@ -27,6 +27,10 @@ const EventListItem: React.FC<EventListItemProps> = (props: EventListItemProps) 
         } else {
             return date.toLocaleDateString();
         }
+    }
+
+    const findCoordinates = () => {
+        console.log("yeeet")
     }
 
     const onClickView = () => {
@@ -62,7 +66,13 @@ const EventListItem: React.FC<EventListItemProps> = (props: EventListItemProps) 
                                 <View style={styles.headerContent}>
                                     <Text style={styles.textStyle}>{`${title}'s Birthday Party`}</Text>
                                     <Text style={styles.noteTextStyle}>{`${location}`}</Text>
+                                    <TouchableWithoutFeedback>
+                                        <TouchableOpacity style={styles.actionButton1} onPress={() => {findCoordinates()}}>
+                                            <Text style={styles.actionText1}>GOING</Text>
+                                        </TouchableOpacity>
+                                    </TouchableWithoutFeedback>
                                 </View>
+                                
                             </View>
                         </View>
                         <MapView
@@ -95,28 +105,22 @@ const EventListItem: React.FC<EventListItemProps> = (props: EventListItemProps) 
                 </ModalContent>
                 <ModalButton style={styles.modalButton} text='close' onPress = {() => {closeModal()}}></ModalButton>
             </Modal>
-        <TouchableHighlight onPress = {() => onClickView()}>
-            <View style={styles.container}>
-                <Image
-                    style={styles.partyImage}
-                    source={{uri: image}}
-                    resizeMode="contain"
-                />
-                <View style={styles.subcontainer}>
-                    <Text style={styles.title}>{`${title}'s Birthday Party`}</Text>
-                    <Text style={styles.location}>{`${location}`}</Text>
-                    {/* <Text>Friends</Text> */}
-                    {/* <View style={{flexDirection: "row", justifyContent:"space-around", alignItems: "stretch"}}>
-                        <Button title="Interested" onPress={()=>{navigation.navigate("Event")}} />
-                        
-                    </View> */}
+            <TouchableHighlight onPress = {() => onClickView()}>
+                <View style={styles.container}>
+                        <Image
+                                style={styles.partyImage}
+                                source={{uri: image}}
+                                resizeMode="contain"
+                            />
+                        <View style={styles.subcontainer}>
+                                <Text style={styles.title}>{`${title}'s Birthday Party`}</Text>
+                                <Text style={styles.location}>{`${location}`}</Text>
+                        </View>
+                        <View style={styles.dateContainer}> 
+                            <Text style={{color: "white"}}>{daysTill}</Text>
+                        </View>
                 </View>
-                <View style={styles.dateContainer}> 
-                    <Text style={{color: "white"}}>{daysTill}</Text>
-                    <Button title="Going" onPress={()=>{}} />
-                </View>
-            </View>
-        </TouchableHighlight>
+            </TouchableHighlight>
         </View>
     )
 }
@@ -129,8 +133,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginLeft: 15,  
         marginRight: 15,
-        // borderBottomColor: "black",
-        // borderBottomWidth:3,
     },
     containerModal: {
         flexDirection: "row",
@@ -236,10 +238,11 @@ const styles = StyleSheet.create({
       },
       actionButton1: {
         height: 36,
+        width: '100%',
         padding: 8
       },
       actionText1: {
-        color: "#FFF",
+        color: "#29b473",
         opacity: 0.9,
         fontSize: 14
       },

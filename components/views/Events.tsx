@@ -1,8 +1,9 @@
 import faker from 'faker';
-import React from 'react';
-import { Text, View, Button, FlatList, StyleSheet} from "react-native";
+import React, { useState } from 'react';
+import { Text, View, Button, FlatList, StyleSheet, Alert, TouchableOpacity} from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { EventListItem } from '../Event';
+import ActionBarImage from '../navigation/ActionBarImage';
 
 
 
@@ -13,6 +14,14 @@ interface EventsScreenProps {
 
 const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props => {
     const { navigate } = props.navigation;
+    const [userLocation, setLocation] = useState<String>(null)
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            setLocation(JSON.stringify(position));
+        },
+        error => Alert.alert(error.message),
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    )
     return(
         <View style={styles.page}>
             <FlatList
@@ -32,13 +41,37 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
 }
 
 EventsScreen.navigationOptions = {
-    title: 'Events',
-}
+    headerTitle: <ActionBarImage />,
+    headerRight: () => (
+        <TouchableOpacity style={styles.actionButton1} onPress={() => {}}>
+            <Text style={styles.actionText1}>ADD</Text>
+        </TouchableOpacity>
+    ),
+    headerStyle:{
+        height: 75,
+        backgroundColor: '#33333D'
+    }
+  }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 22
+    },
+    actionButton1: {
+        height: 36,
+        width: '100%',
+        padding: 8,
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 15,
+    },
+    actionText1: {
+        color: "#29b473",
+        opacity: 0.9,
+        fontSize: 25
     },
     item: {
       padding: 10,

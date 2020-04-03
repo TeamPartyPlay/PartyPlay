@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
+import ActionBarImage from '../navigation/ActionBarImage';
 
 
 // tslint:disable-next-line: interface-name
@@ -20,8 +21,14 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
 
 }
 
+
 EventScreen.navigationOptions = {
-    title: 'Event Name',
-}
+    headerLeft: <ActionBarImage />,
+    headerStyle:{
+      height: 0,
+      padding: 0,
+      margin: 0,
+    }
+  }
 
 export default EventScreen;
