@@ -26,28 +26,38 @@ const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.
 
 const VoteStack = createStackNavigator({Vote: View.VoteScreen})
 
-const MapStack = createStackNavigator({Map: View.MapScreen})
+const MapStack = createStackNavigator({
+    Map: View.MapScreen,
+})
 
 const AppStack = createBottomTabNavigator(
     {
         Events: EventStack,
-        // Map: MapStack, 
+        //Map: MapStack, 
         Playlist: PlaylistStack,
         Vote: VoteStack,
         // tslint:disable-next-line: object-literal-sort-keys
-        Activity: ActivityStack, 
+        //Activity: ActivityStack, 
         Profile: ProfileStack
     },
+    
     {
         defaultNavigationOptions: props => ({
-            headerTitleStyle: {
-                fontFamily: 'Roboto',
-            },
             tabBarIcon: ({ focused, horizontal, tintColor }) => {
                 const { routeName } = props.navigation.state;
-                return <IconComponent name={`md-${Icons[routeName]}`} size={25} color={focused ? 'blue' : 'black' } />
+                return <IconComponent name={`md-${Icons[routeName]}`} size={25} color={focused ? '#29b473' : 'white' } />
             },
+            
         }),
+        tabBarOptions: {
+            activeTintColor: '#29b473',
+            style: {
+                backgroundColor: "#2d2d36",
+                borderTopColor: 'transparent',
+                paddingRight: 10,
+                paddingLeft: 10,
+            }
+        },
         initialRouteName:'Events',
 
     }

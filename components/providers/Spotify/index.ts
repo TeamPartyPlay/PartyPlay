@@ -1,6 +1,6 @@
 import { DeviceContext, DeviceProvider } from './Device';
 import { PlayerContext, PlayerProvider } from './Player';
-import { PlaylistContext, PlaylistProvider } from './Playlist';
+import { PlaylistContext, PlaylistProvider} from './Playlist';
 import { SpotifyContext, SpotifyProvider } from "./Spotify";
 
 interface SpotifyProps {

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'; 
-import { Button, View } from 'react-native';
+import { Button, View, Text, Image, StyleSheet } from 'react-native';
 import { Input } from 'react-native-elements';
 import { PlaylistContext } from '../providers/Spotify';
 import Song from './Song';
