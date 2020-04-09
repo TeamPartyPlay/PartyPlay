@@ -13,13 +13,12 @@ type Props = {
 }
 
 const LoginScreen: NavigationStackScreenComponent<Props> = props => {
-    const {navigate} = props.navigation;
+    const { navigate } = props.navigation;
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
     const signUp = async () => {
-        
-        navigate('App');
+        navigate('SignUp');
     }
 
     const signIn = async () => {
@@ -56,23 +55,24 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
                     <View style={styles.group5}>
                     <View style={styles.rect}>
                         <Image
-                        source={require("../../assets/partyPlayLogoWide.png")}
-                        resizeMode="contain"
-                        style={styles.image}
-                        ></Image>
+                            source={require("../../assets/partyPlayLogoWide.png")}
+                            resizeMode="contain"
+                            style={styles.image}
+                        />
                         <Text style={styles.welcomeBack}>Welcome Back</Text>
                         <MaterialIconTextbox3
-                        style={styles.materialIconTextbox32}
-                        onChangeText={text => setUsername(text)}
-                        ></MaterialIconTextbox3>
+                            style={styles.materialIconTextbox32}
+                            onChangeText={text => setUsername(text)}
+                        />
                         <MaterialIconTextbox4
-                        style={styles.materialIconTextbox4}
-                        onChangeText={text => setPassword(text)}
-                        ></MaterialIconTextbox4>
+                            style={styles.materialIconTextbox4}
+                            onChangeText={text => setPassword(text)}
+                        />
                         <MaterialButtonDark
-                        style={styles.materialButtonDark}
-                        onPress={signUp}
-                        ></MaterialButtonDark>
+                            title="Login"
+                            style={styles.materialButtonDark}
+                            onPress={signIn}
+                        />
                     </View>
                     </View>
                 <Button title="Sign Up!" onPress={signUp} />
@@ -80,25 +80,6 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
                 </View>
             </View>
         </View>
-        /* <View style={{flexDirection: 'column', justifyContent: 'space-around'}}>
-
-        
-            <Input
-                placeholder="Username" 
-                label="Username"
-                value={username} 
-                onChangeText={text => setUsername(text)}
-            />
-            <Input
-                placeholder="Password" 
-                label="Password"
-                value={password}
-                secureTextEntry={true}
-                onChangeText={text => setPassword(text)}
-            />
-            <Button title="Sign Up!" onPress={signUp} />
-            <Button title="Sign in!" onPress={signIn} />
-        </View> */
     )
 }
 
