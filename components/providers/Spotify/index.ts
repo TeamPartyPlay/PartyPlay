@@ -1,7 +1,7 @@
-import { PlayerContext, PlayerProvider } from './Player';
-import { SpotifyContext, SpotifyProvider } from "./Spotify";
 import { DeviceContext, DeviceProvider } from './Device';
-
+import { PlayerContext, PlayerProvider } from './Player';
+import { PlaylistContext, PlaylistProvider} from './Playlist';
+import { SpotifyContext, SpotifyProvider } from "./Spotify";
 
 interface SpotifyProps {
     Provider: React.FC,
@@ -35,5 +35,7 @@ export {
     PlayerProvider,
     Spotify, 
     SpotifyContext, 
-    SpotifyProvider 
+    SpotifyProvider,
+    PlaylistContext,
+    PlaylistProvider,
 };

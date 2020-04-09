@@ -92,7 +92,6 @@ const SpotifyProvider: FC<SpotifyProps> = ({children}) => {
 
     useEffect(()=>{
         console.log("Auth Code Use Effect");
-        console.log(authCode && !accessToken && !refreshToken && !expiration);
         if (authCode && !accessToken && !refreshToken && !expiration){
             getTokens();
         }
