@@ -14,7 +14,7 @@ interface EventsScreenProps {
 
 const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props => {
     const { navigate } = props.navigation;
-    const [userLocation, setLocation] = useState<String>(null)
+    const [userLocation, setLocation] = useState<string>(null)
     navigator.geolocation.getCurrentPosition(
         position => {
             setLocation(JSON.stringify(position));
@@ -56,7 +56,7 @@ EventsScreen.navigationOptions = {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        //paddingTop: 22
+        paddingTop: 22
     },
     actionButton1: {
         height: 36,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         fontSize: 25
     },
     item: {
-      // padding: 10,
+      padding: 10,
       fontSize: 18,
       height: 44,
     },
