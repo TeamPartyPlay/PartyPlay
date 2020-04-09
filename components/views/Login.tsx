@@ -30,13 +30,15 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
                     password
                 })
             })
-            // console.log(res);
-            const cookieStr: string = res.headers['map']['set-cookie'];
-            const tokenStr: string = cookieStr.split(';')[0];
-            const token: string = tokenStr.split("=")[1];
-            await AsyncStorage.setItem('userToken', token);
-            navigate('App');
-
+            if(res.status === 200){
+                const cookieStr: string = res.headers['map']['set-cookie'];
+                const tokenStr: string = cookieStr.split(';')[0];
+                const token: string = tokenStr.split("=")[1];
+                await AsyncStorage.setItem('userToken', token);
+                navigate('App');
+            } else {
+                throw Error('Sign Up Failed!')
+            }
         } catch (error) {
             console.log(error);
         }
@@ -52,7 +54,8 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
             <Input
                 placeholder="Password" 
                 label="Password"
-                value={password} 
+                value={password}
+                secureTextEntry={true}
                 onChangeText={text => setPassword(text)}
             />
             <Button title="Sign Up!" onPress={signUp} />
