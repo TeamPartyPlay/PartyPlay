@@ -37,6 +37,9 @@
               "apiKey": "AIzaSyAHnm2KoWjehZ9aWBPvntAAIZeYzQIxEvM"
           }
       }
+    },
+    "androidStatusBar":{
+      "hidden": true
     }
   }
 }

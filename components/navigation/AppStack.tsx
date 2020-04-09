@@ -4,6 +4,7 @@ import React from 'react';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import * as View from "../views";
+import Theme from '../providers/Theme';
 
 const IconComponent = Ionicons;
 
@@ -16,19 +17,17 @@ const Icons = {
     Map: "map"
 }
 
-const ProfileStack = createStackNavigator({Profile: View.ProfileScreen});
+const ProfileStack = createStackNavigator({Profile: View.ProfileScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
 
-const ActivityStack = createStackNavigator({Activity: View.ActivityScreen});
+const ActivityStack = createStackNavigator({Activity: View.ActivityScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
 
-const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen});
+const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
 
-const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.EventScreen});
+const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.EventScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
 
-const VoteStack = createStackNavigator({Vote: View.VoteScreen})
+const VoteStack = createStackNavigator({Vote: View.VoteScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}})
 
-const MapStack = createStackNavigator({
-    Map: View.MapScreen,
-})
+const MapStack = createStackNavigator({Map: View.MapScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}})
 
 const AppStack = createBottomTabNavigator(
     {

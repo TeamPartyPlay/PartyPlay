@@ -41,22 +41,22 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
 }
 
 EventsScreen.navigationOptions = {
-    headerTitle: <ActionBarImage />,
+    headerTitle: <ActionBarImage/>,
     headerRight: () => (
         <TouchableOpacity style={styles.actionButton1} onPress={() => {}}>
             <Text style={styles.actionText1}>ADD</Text>
         </TouchableOpacity>
     ),
     headerStyle:{
+        backgroundColor: '#33333D',
         height: 75,
-        backgroundColor: '#33333D'
     }
   }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 22
+        //paddingTop: 22
     },
     actionButton1: {
         height: 36,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         fontSize: 25
     },
     item: {
-      padding: 10,
+      // padding: 10,
       fontSize: 18,
       height: 44,
     },

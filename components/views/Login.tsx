@@ -2,9 +2,10 @@ import React, { useState } from "react"
 import { AsyncStorage, Button, View, StyleSheet } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent } from "react-navigation-stack";
 import { Input, Image, Text } from "react-native-elements";
-import MaterialIconTextbox3 from "../../components/MaterialIconTextbox3";
-import MaterialIconTextbox4 from "../../components/MaterialIconTextbox4";
-import MaterialButtonDark from "../../components/MaterialButtonDark";
+import MaterialButtonDark from "../MaterialButtonDark";
+import MaterialIconTextbox3 from "../MaterialIconTextbox3";
+import MaterialIconTextbox4 from "../MaterialIconTextbox4";
+
 import ActionBarImage from "../navigation/ActionBarImage";
 
 
