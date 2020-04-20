@@ -1134,6 +1134,8 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
     ws "^1.1.0"
+    xcode "^2.0.0"
+    xmldoc "^0.4.0"
 
 "@react-navigation/core@^3.5.1":
   version "3.5.1"
