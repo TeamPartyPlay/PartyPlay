@@ -1,10 +1,13 @@
+import { Ionicons } from '@expo/vector-icons';
 import faker from 'faker';
 import React, { useState } from 'react';
-import { Text, View, Button, FlatList, StyleSheet, Alert, TouchableOpacity} from "react-native";
+import { Text, View, FlatList, StyleSheet, Alert, TouchableOpacity} from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { EventListItem } from '../Event';
 import ActionBarImage from '../navigation/ActionBarImage';
+import Theme from '../providers/Theme';
 
+const IconComponent = Ionicons;
 
 
 // tslint:disable-next-line: interface-name
@@ -34,24 +37,23 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
                 renderItem={({item}) => <EventListItem title={item.key} location={item.location} date={item.date} image={item.image}/>}
                 keyExtractor={item => item.key}
             />
-            
         </View>
     )
 
 }
 
-EventsScreen.navigationOptions = {
+EventsScreen.navigationOptions = ({navigation, screenProps}) => ({
     headerTitle: <ActionBarImage/>,
     headerRight: () => (
-        <TouchableOpacity style={styles.actionButton1} onPress={() => {}}>
-            <Text style={styles.actionText1}>ADD</Text>
+        <TouchableOpacity style={styles.actionButton1} onPress={() => navigation.navigate('Event')}>
+            <IconComponent name={`md-add`} style={styles.actionText1}/>
         </TouchableOpacity>
     ),
     headerStyle:{
-        backgroundColor: '#33333D',
+        backgroundColor: Theme.colors.primary,
         height: 75,
     }
-  }
+  })
 
 const styles = StyleSheet.create({
     container: {
@@ -61,6 +63,7 @@ const styles = StyleSheet.create({
     actionButton1: {
         height: 36,
         width: '100%',
+        // tslint:disable-next-line: object-literal-sort-keys
         padding: 8,
         flex: 1,
         flexDirection: 'column',
@@ -71,7 +74,7 @@ const styles = StyleSheet.create({
     actionText1: {
         color: "#29b473",
         opacity: 0.9,
-        fontSize: 25
+        fontSize: 35
     },
     item: {
       padding: 10,
@@ -79,7 +82,7 @@ const styles = StyleSheet.create({
       height: 44,
     },
     page: {
-        backgroundColor: "#33333D"
+        backgroundColor: Theme.colors.primary,
     }
 })
     
