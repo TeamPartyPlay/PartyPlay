@@ -3,7 +3,7 @@
     "name": "PartyPlay",
     "slug": "PartyPlay",
     "privacy": "public",
-    "sdkVersion": "35.0.0",
+    "sdkVersion": "37.0.0",
     "platforms": [
       "ios",
       "android",
@@ -27,18 +27,18 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.company",
       "config": {
-          "googleMapsApiKey": "<ios maps api key>"
+        "googleMapsApiKey": "<ios maps api key>"
       }
     },
     "android": {
       "package": "com.company",
       "config": {
-          "googleMaps": {
-              "apiKey": "AIzaSyAHnm2KoWjehZ9aWBPvntAAIZeYzQIxEvM"
-          }
+        "googleMaps": {
+          "apiKey": "AIzaSyAHnm2KoWjehZ9aWBPvntAAIZeYzQIxEvM"
+        }
       }
     },
-    "androidStatusBar":{
+    "androidStatusBar": {
       "hidden": true
     }
   }
