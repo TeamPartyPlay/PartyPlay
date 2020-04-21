@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import faker from 'faker';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, FlatList, StyleSheet, Alert, TouchableOpacity} from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { EventListItem } from '../Event';
@@ -18,13 +18,20 @@ interface EventsScreenProps {
 const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props => {
     const { navigate } = props.navigation;
     const [userLocation, setLocation] = useState<string>(null)
-    navigator.geolocation.getCurrentPosition(
-        position => {
-            setLocation(JSON.stringify(position));
-        },
-        error => Alert.alert(error.message),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    )
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                setLocation(JSON.stringify(position));
+            },
+            error => Alert.alert(error.message),
+            {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+        )
+    }, [])
+
+    useEffect(() => {
+        console.log(userLocation);
+    }, [userLocation])
+
     return(
         <View style={styles.page}>
             <FlatList
