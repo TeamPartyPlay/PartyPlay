@@ -4,6 +4,7 @@ import { Text, View, Button, FlatList, StyleSheet, Alert, TouchableOpacity} from
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { EventListItem } from '../Event';
 import ActionBarImage from '../navigation/ActionBarImage';
+import Icon from "react-native-vector-icons/Ionicons";
 
 
 
@@ -44,7 +45,7 @@ EventsScreen.navigationOptions = {
     headerTitle: <ActionBarImage/>,
     headerRight: () => (
         <TouchableOpacity style={styles.actionButton1} onPress={() => {}}>
-            <Text style={styles.actionText1}>ADD</Text>
+            {/* <Icon name="ios-add" size='15'></Icon> */}
         </TouchableOpacity>
     ),
     headerStyle:{
@@ -54,6 +55,13 @@ EventsScreen.navigationOptions = {
   }
 
 const styles = StyleSheet.create({
+    iconStyleText: {
+      color: "#616161",
+      fontSize: 50,
+      paddingLeft: 8,
+      width: 50,
+      height: '100%'
+    },
     container: {
         flex: 1,
         paddingTop: 22

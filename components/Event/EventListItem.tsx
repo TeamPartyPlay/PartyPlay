@@ -66,11 +66,6 @@ const EventListItem: React.FC<EventListItemProps> = (props: EventListItemProps) 
                                 <View style={styles.headerContent}>
                                     <Text style={styles.textStyle}>{`${title}'s Birthday Party`}</Text>
                                     <Text style={styles.noteTextStyle}>{`${location}`}</Text>
-                                    <TouchableWithoutFeedback>
-                                        <TouchableOpacity style={styles.actionButton1} onPress={() => {findCoordinates()}}>
-                                            <Text style={styles.actionText1}>GOING</Text>
-                                        </TouchableOpacity>
-                                    </TouchableWithoutFeedback>
                                 </View>
                                 
                             </View>
@@ -97,9 +92,11 @@ const EventListItem: React.FC<EventListItemProps> = (props: EventListItemProps) 
                             </Text>
                         </View>
                         <View style={styles.actionBody}>
-                            <TouchableOpacity style={styles.actionButton1}>
-                            <Text style={styles.actionText1}>GOING</Text>
-                            </TouchableOpacity>
+                            <TouchableWithoutFeedback>
+                                <TouchableOpacity style={styles.actionButton1} onPress={() => {findCoordinates()}}>
+                                    <Text style={styles.actionText1}>GOING</Text>
+                                </TouchableOpacity>
+                            </TouchableWithoutFeedback>
                         </View>
                     </View>
                 </ModalContent>
@@ -126,6 +123,41 @@ const EventListItem: React.FC<EventListItemProps> = (props: EventListItemProps) 
 }
 
 const styles = StyleSheet.create({
+    containerLogin: {
+        backgroundColor: "#212121",
+        position: 'absolute',
+        bottom: 0,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingRight: 16,
+        paddingLeft: 16,
+        elevation: 2,
+        minWidth: 88,
+        borderRadius: 2,
+        shadowOffset: {
+            height: 5,
+            width: 5
+        },
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 5
+    },
+    materialButtonDark: {
+        width: '100%',
+        alignItems: "center",
+        justifyContent: "center",
+        height: 36,
+        backgroundColor: "rgba(41,180,115,1)",
+        borderRadius: 100,
+        shadowOffset: {
+          height: 5,
+          width: 5
+        },
+        shadowColor: "rgba(0,0,0,1)",
+        shadowOpacity: 0.3,
+        marginTop: 22,
+      },
     container: {
         flexDirection: "row",
         marginTop: 5,
