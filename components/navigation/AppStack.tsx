@@ -21,7 +21,7 @@ const ProfileStack = createStackNavigator({Profile: View.ProfileScreen}, {cardSt
 
 const ActivityStack = createStackNavigator({Activity: View.ActivityScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
 
-const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
+const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen}, {cardStyle: {backgroundColor: Theme.colors.primary }});
 
 const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.EventScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
 

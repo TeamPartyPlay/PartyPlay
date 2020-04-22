@@ -1,14 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import faker from 'faker';
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, StyleSheet, Alert, TouchableOpacity} from "react-native";
+import { Text, View, FlatList, StyleSheet, Alert, TouchableOpacity, AsyncStorage} from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { EventListItem } from '../Event';
 import ActionBarImage from '../navigation/ActionBarImage';
 import Theme from '../providers/Theme';
+import { baseServerUrl } from '../../secret';
+import { IEvent } from '../models/Event';
 
 const IconComponent = Ionicons;
-
 
 // tslint:disable-next-line: interface-name
 interface EventsScreenProps {
@@ -17,6 +18,7 @@ interface EventsScreenProps {
 
 const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props => {
     const { navigate } = props.navigation;
+    const [events, setEvents] = useState<IEvent[]>();
     const [userLocation, setLocation] = useState<string>(null)
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(
@@ -29,12 +31,42 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
     }, [])
 
     useEffect(() => {
+        // Get all events
+        getEvents();
+    }, []);
+
+    useEffect(() => {
         console.log(userLocation);
     }, [userLocation])
 
+    const getEvents = async () => {
+        try {
+            const userToken = await AsyncStorage.getItem('userToken');
+            const res = await fetch(`${baseServerUrl}/api/event/all/?token=${userToken}`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            });
+            const json = await res.json();
+            setEvents(json);
+        } catch (error) {
+            console.error(error)
+        }
+        
+    }
+
     return(
         <View style={styles.page}>
-            <FlatList
+            {events && (
+                <FlatList
+                    data={events}
+                    renderItem={({item}) => <EventListItem title={item.name} location={item.location} date={item.start} image={faker.image.avatar()}/>}
+                    keyExtractor={item => item._id}
+                />
+            )}
+            {/*<FlatList
                 data={Array.from({length: 10}, (_, id)=>({
                     date: faker.date.future(),
                     image: faker.image.avatar(),
@@ -43,7 +75,7 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
                 }))}
                 renderItem={({item}) => <EventListItem title={item.key} location={item.location} date={item.date} image={item.image}/>}
                 keyExtractor={item => item.key}
-            />
+            />*/}
         </View>
     )
 

@@ -1,9 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { Text, View, Button, AsyncStorage } from "react-native";
+import { Text, View, Button, AsyncStorage, ScrollView, Image } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { Input, CheckBox } from 'react-native-elements';
 import { DateTime, Tags } from '../Event/AddForm';
-import axois from 'axios';
+import EventImage from '../Event/AddForm/EventImage';
+import { ImagePickerResult } from  'expo-image-picker';
+import Theme from '../providers/Theme';
+import {baseServerUrl} from '../../secret';
 
 
 // tslint:disable-next-line: interface-name
@@ -20,6 +23,7 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
     const [end, setEnd] = useState<Date>();
     const [isPublic, setIsPublic] = useState<boolean>(false);
     const [tags, setTags] = useState<string[]>([]);
+    const [image, setImage] = useState<ImagePickerResult>();
 
     const clearForm = () => {
         setName("");
@@ -28,6 +32,30 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
         setEnd(undefined);
         setIsPublic(false);
         setTags([]);
+    }
+
+    const submitImage = async (id: string) => {
+        let data = new FormData();
+        if(image?.cancelled === false) {
+            const splitUri = image.uri.split(/[\/\.]/);
+            const type = splitUri.pop();
+            const name = splitUri.pop();
+            data.append('file', {
+                uri: image.uri,
+                type: `${image.type}/${type}`,
+                name: name+type,
+            });
+            // data.append('eventId', id);
+            const res = await fetch(`${baseServerUrl}/api/event/image`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: data
+            })
+            console.log(res.status);
+            console.log(await res.text())
+        }
     }
 
     const onSubmit = async () => {
@@ -54,6 +82,7 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
             })
             if(res.status === 200){
                 const json =  await res.json();
+                // await submitImage(json._id);
                 clearForm();
                 props.navigation.goBack();
             }
@@ -62,7 +91,17 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
         }
     }
     return(
-        <View style={{flex: 1, flexDirection: "column"}}>
+        <ScrollView style={{flex: 1, flexDirection: "column"}}>
+        {image?.cancelled === false && (
+            <Image 
+                source={{uri: image.uri}}
+                style={{
+                    width: 200,
+                    height: 200,
+                    alignSelf: "center"
+                }}
+            />
+        )}
             <View>
             <Input
                 placeholder="Name" 
@@ -86,8 +125,9 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
             />
             <DateTime dateTimeState={[start, setStart]} />
             <Tags state={[tags, setTags]}/>
+            <EventImage imageState={[image, setImage]}/>
             <Button title="Submit" onPress={onSubmit} />
-        </View>
+        </ScrollView>
     )
 
 }
@@ -97,7 +137,7 @@ EventScreen.navigationOptions = {
     headerTitle: "Add An Event",
     headerStyle:{
         height: 75,
-        backgroundColor: '#33333D'
+        backgroundColor: Theme.colors.primary,
     }
   }
 
