@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableHighlight } from 'react-native-gesture-handler';
-import { withNavigation } from 'react-navigation';
 import { NavigationStackProp } from 'react-navigation-stack';
 
 import EventModal from './EventModal';
@@ -53,12 +52,47 @@ const EventListItem: React.FC<EventListItemProps> = ({navigation, event, image, 
 }
 
 const styles = StyleSheet.create({
+    containerLogin: {
+        backgroundColor: "#212121",
+        position: 'absolute',
+        bottom: 0,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingRight: 16,
+        paddingLeft: 16,
+        elevation: 2,
+        minWidth: 88,
+        borderRadius: 2,
+        shadowOffset: {
+            height: 5,
+            width: 5
+        },
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 5
+    },
+    materialButtonDark: {
+        width: '100%',
+        alignItems: "center",
+        justifyContent: "center",
+        height: 36,
+        backgroundColor: "rgba(41,180,115,1)",
+        borderRadius: 100,
+        shadowOffset: {
+          height: 5,
+          width: 5
+        },
+        shadowColor: "rgba(0,0,0,1)",
+        shadowOpacity: 0.3,
+        marginTop: 22,
+      },
     container: {
         flexDirection: "row",
         marginTop: 5,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 15,  
+        marginLeft: 15,
         marginRight: 15,
     },
     containerModal: {

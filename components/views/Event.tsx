@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Text, View, Button, AsyncStorage, ScrollView, Image } from "react-native";
+import { Text, View, Button, AsyncStorage, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { Input, CheckBox } from 'react-native-elements';
 import { DateTime, Tags } from '../Event/AddForm';
@@ -7,6 +7,7 @@ import EventImage from '../Event/AddForm/EventImage';
 import { ImagePickerResult } from  'expo-image-picker';
 import Theme from '../providers/Theme';
 import {baseServerUrl} from '../../secret';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 // tslint:disable-next-line: interface-name
@@ -118,18 +119,63 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
             />
             <CheckBox 
                 title="Is Public" 
+                containerStyle={{backgroundColor: 'transparent', borderWidth: 0,}}
+                center
+                textStyle= {{color: 'white', fontSize: 20}}
                 checked={isPublic} 
                 onPress={() => setIsPublic(!isPublic)}
             />
+    
             <DateTime dateTimeState={[start, setStart]} />
             <Tags state={[tags, setTags]}/>
             <EventImage imageState={[image, setImage]}/>
-            <Button title="Submit" onPress={onSubmit} />
+            <TouchableOpacity style={[styles.containerSubmit, styles.materialButtonDark]} onPress={onSubmit}>
+                <Text style={{}}>Create Party</Text>
+            </TouchableOpacity>
         </ScrollView>
+            
     )
 
 }
-
+const styles = StyleSheet.create({
+    containerSubmit: {
+        backgroundColor: "#212121",
+        position: 'absolute',
+        bottom: 0,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingRight: 16,
+        paddingLeft: 16,
+        elevation: 2,
+        minWidth: 88,
+        borderRadius: 2,
+        shadowOffset: {
+            height: 5,
+            width: 5
+        },
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 5
+    },
+    materialButtonDark: {
+        width: '100%',
+        alignItems: "center",
+        justifyContent: "center",
+        height: 36,
+        backgroundColor: "rgba(41,180,115,1)",
+        borderRadius: 100,
+        shadowOffset: {
+          height: 5,
+          width: 5
+        },
+        shadowColor: "rgba(0,0,0,1)",
+        shadowOpacity: 0.3,
+        marginTop: 22,
+        paddingBottom: 10,
+    },
+    
+});
 
 EventScreen.navigationOptions = {
     headerTitle: "Add An Event",

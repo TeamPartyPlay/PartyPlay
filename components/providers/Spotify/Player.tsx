@@ -82,11 +82,12 @@ const PlayerProvider: FC<SpotifyProps> = ({children}) => {
 const MusicControl: React.FC<SpotifyProps> = ({children}) => {
     const {next, playbackState, previous, pause, play} = useContext(PlayerContext);
     return(
-        <View style={{flex: 1, flexDirection: 'column', alignContent: 'stretch'}}>
+        <View>
               {(playbackState && playbackState.item) ?
                 <View style={[styles.container]}>
                     <View style={styles.cardBody}>
                         <View style={styles.bodyContent}>
+                        <Text style={{color: "white",fontSize: 24,}}>PLAYING:</Text>
                         <Text style={styles.titleStyle}>{playbackState.item.name}</Text>
                         <Text style={styles.subtitleStyle}>{playbackState.item.artists.map(el => el.name).join(', ')}</Text>
                         </View>
@@ -97,7 +98,7 @@ const MusicControl: React.FC<SpotifyProps> = ({children}) => {
                     </View>
                 </View>
                 : <></>}
-            <View style={{flexDirection: "row", justifyContent: 'space-around'}}>
+            {/* <View style={{flexDirection: "row", justifyContent: 'space-around'}}>
                 <IconComponent name="md-skip-backward" size={25} onPress={previous}/>
                 {
                     playbackState && playbackState.is_playing 
@@ -105,19 +106,16 @@ const MusicControl: React.FC<SpotifyProps> = ({children}) => {
                     : <IconComponent name="md-play" size={25} onPress={play}/>
                 }
                 <IconComponent name="md-skip-forward" size={25} onPress={next}/>    
-            </View>
+            </View> */}
         </View>
     )
 }
 const styles = StyleSheet.create({
     container: {
       backgroundColor: "#33333D",
-      flexWrap: "nowrap",
-      overflow: "hidden"
     },
     cardBody: {
       flexDirection: "row",
-      justifyContent: "space-between"
     },
     bodyContent: {
       flex: 1,

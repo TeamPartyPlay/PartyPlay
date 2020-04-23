@@ -99,6 +99,13 @@ EventsScreen.navigationOptions = ({navigation, screenProps}) => ({
   })
 
 const styles = StyleSheet.create({
+    iconStyleText: {
+      color: "#616161",
+      fontSize: 50,
+      paddingLeft: 8,
+      width: 50,
+      height: '100%'
+    },
     container: {
         flex: 1,
         paddingTop: 22
@@ -128,7 +135,7 @@ const styles = StyleSheet.create({
         backgroundColor: Theme.colors.primary,
     }
 })
-    
-    
+
+
 
 export default EventsScreen;

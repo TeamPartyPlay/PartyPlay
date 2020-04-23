@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Button, View, Text, StyleSheet, AsyncStorage } from "react-native";
+import { Button, View, Text, StyleSheet, AsyncStorage, ScrollView, Image } from "react-native";
 import { 
     NavigationStackProp,
     NavigationStackScreenComponent 
@@ -57,10 +57,80 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
                 </View>
             </View>
             <MusicControl />
-            
+            <ScrollView style={styles.containerCardCard}>
+              <View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View><View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View><View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View><View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View><View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
             {!spotify.getAccessToken() && <SpotifyButton />}
             <Playlist />
-            <Button title ="Create Playlist" onPress={()=> {setVisible(!visible)}} />
+            
+            {/* <Button title ="Create Playlist" onPress={()=> {setVisible(!visible)}} /> */}
             <CreatePlaylistModal visible={visible} setVisible={setVisible}/>
             
             {/*
@@ -70,6 +140,81 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
     )
 }
 const styles = StyleSheet.create({
+  containerLogin: {
+    backgroundColor: "#212121",
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingRight: 16,
+    paddingLeft: 16,
+    elevation: 2,
+    minWidth: 88,
+    borderRadius: 2,
+    shadowOffset: {
+        height: 5,
+        width: 5
+    },
+    shadowColor: "#000",
+    shadowOpacity: 0.35,
+    shadowRadius: 5
+},
+materialButtonDark: {
+    width: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    height: 36,
+    backgroundColor: "rgba(41,180,115,1)",
+    borderRadius: 100,
+    shadowOffset: {
+      height: 5,
+      width: 5
+    },
+    shadowColor: "rgba(0,0,0,1)",
+    shadowOpacity: 0.3,
+    marginTop: 22,
+  },
+containerCardCard: {
+    width: '100%',
+  },
+  containerCard: {
+    backgroundColor: "#33333D",
+  },
+  cardBodyCard: {
+    width: '100%',
+    height: 140,
+    flexDirection: "row",
+  },
+  bodyContentCard: {
+    flex: 1,
+    paddingLeft: 5,
+    paddingTop: 20
+  },
+  bodyContentAddCard: {
+    flex: 1,
+    paddingTop: '50%'
+  },
+  titleStyleCard: {
+    color: "#FFF",
+    paddingBottom: 12,
+    fontSize: 24,
+  },
+  subtitleStyleCard: {
+    color: "#FFF",
+    alignSelf: "flex-start",
+    opacity: 0.5,
+    justifyContent: "space-between",
+    paddingTop: 0,
+    fontSize: 14,
+    lineHeight: 16
+  },
+  cardItemImagePlaceCard: {
+    width: 120,
+    height: 120,
+    backgroundColor: "#ccc",
+    margin: 10
+  },
     container: {
       width: '100%',
       height: 200
