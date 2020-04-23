@@ -3,8 +3,7 @@ import { AsyncStorage, Button, View, StyleSheet, Alert } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent } from "react-navigation-stack";
 import { Image, Text } from "react-native-elements";
 import MaterialButtonDark from "../MaterialButtonDark";
-import MaterialIconTextbox3 from "../MaterialIconTextbox3";
-import MaterialIconTextbox4 from "../MaterialIconTextbox4";
+import MaterialIconTextBox from "../MaterialIconTextBox";
 import { UserContext } from "../providers/User";
 
 
@@ -67,11 +66,15 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
                             style={styles.image}
                         />
                         <Text style={styles.welcomeBack}>Welcome Back</Text>
-                        <MaterialIconTextbox3
+                        <MaterialIconTextBox
+                            icon={'ios-person'}
+                            placeholder="Username"
                             style={styles.materialIconTextbox32}
                             onChangeText={text => setUsername(text)}
                         />
-                        <MaterialIconTextbox4
+                        <MaterialIconTextBox
+                            icon={'ios-key'}
+                            placeholder="Password"
                             style={styles.materialIconTextbox4}
                             onChangeText={text => setPassword(text)}
                         />
