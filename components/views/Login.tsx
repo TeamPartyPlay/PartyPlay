@@ -1,12 +1,11 @@
-import React, { useState } from "react"
-import { AsyncStorage, Button, View, StyleSheet } from "react-native";
+import React, { useState, useContext, useEffect } from "react"
+import { AsyncStorage, Button, View, StyleSheet, Alert } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent } from "react-navigation-stack";
-import { Input, Image, Text } from "react-native-elements";
+import { Image, Text } from "react-native-elements";
 import MaterialButtonDark from "../MaterialButtonDark";
 import MaterialIconTextbox3 from "../MaterialIconTextbox3";
 import MaterialIconTextbox4 from "../MaterialIconTextbox4";
-
-import ActionBarImage from "../navigation/ActionBarImage";
+import { UserContext } from "../providers/User";
 
 
 type Props = {
@@ -14,39 +13,46 @@ type Props = {
 }
 
 const LoginScreen: NavigationStackScreenComponent<Props> = props => {
+    const [userToken, setUserToken] = useContext(UserContext)
     const { navigate } = props.navigation;
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+
+    useEffect(() => {
+      console.log({username, password});
+    }, [username, password])
 
     const signUp = async () => {
         navigate('SignUp');
     }
 
     const signIn = async () => {
-        try {
-            const res = await fetch('https://partyplayserver.herokuapp.com/api/user/login', {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username,
-                    password
-                })
-            })
-            if(res.status === 200){
-                const cookieStr: string = res.headers['map']['set-cookie'];
-                const tokenStr: string = cookieStr.split(';')[0];
-                const token: string = tokenStr.split("=")[1];
-                await AsyncStorage.setItem('userToken', token);
-                navigate('App');
-            } else {
-                throw Error('Sign Up Failed!')
-            }
-        } catch (error) {
-            console.log(error);
-        }
+      try {
+          const res = await fetch('https://partyplayserver.herokuapp.com/api/user/login', {
+              method: 'POST',
+              headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  username,
+                  password
+              })
+          });
+          console.log(res.status)
+          if(res.status === 200){
+            console.log("Login Successful")
+            const cookieStr: string = res.headers['map']['set-cookie'];
+            const tokenStr: string = cookieStr.split(';')[0];
+            const token: string = tokenStr.split("=")[1];
+            setUserToken(token);
+            navigate('App');
+          } else {
+            Alert.alert('Login Failed!');
+          }
+      } catch (error) {
+          console.error(error);
+      }
     }
     return(
         <View style={styles.container}>

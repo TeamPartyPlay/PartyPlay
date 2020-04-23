@@ -84,7 +84,10 @@ const EventModal: FC<EventListItemProps> = ({openState, event, image}) => {
                                         >
                                             <Text style={styles.actionText1}>GOING</Text>
                                         </TouchableOpacity>*/}
-                                        {user && <EventStatus eventId={event._id} initialStatus={event.attendees.includes(user._id)} />}
+                                        {user && <EventStatus 
+                                            eventId={event._id} 
+                                            initialStatus={event.attendees.includes(user._id)} 
+                                        />}
                                     </TouchableWithoutFeedback>
                                 </View>
                             </View>

@@ -6,7 +6,7 @@ function MaterialIconTextbox3(props) {
   return (
     <View style={[styles.container, props.style]}>
       <Icon name="ios-person" style={styles.iconStyle}></Icon>
-      <TextInput placeholder="Username" style={styles.inputStyle}></TextInput>
+      <TextInput placeholder="Username" style={styles.inputStyle} onChangeText={props.onChangeText}></TextInput>
     </View>
   );
 }
