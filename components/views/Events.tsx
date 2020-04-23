@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import faker from 'faker';
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, StyleSheet, Alert, TouchableOpacity, AsyncStorage} from "react-native";
+import { Text, View, FlatList, StyleSheet, Alert, TouchableOpacity, AsyncStorage, RefreshControl} from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { EventListItem } from '../Event';
 import ActionBarImage from '../navigation/ActionBarImage';
@@ -21,8 +21,10 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
     const { navigate } = props.navigation;
     const [events, setEvents] = useState<IEvent[]>();
     const [userLocation, setLocation] = useState<string>(null);
+    const [refreshing, setRefreshing] = useState(false);
 
     const getUser = async () => {
+        
         const userToken = await AsyncStorage.getItem("userToken");
         const res = await fetch(`${baseServerUrl}/api/user?token=${userToken}`, {
             method: 'GET',
@@ -35,6 +37,26 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
             const json = await res.json();
             setUser(json);
         }
+        
+    }
+
+    const getEvents = async () => {
+        setRefreshing(true);
+        try {
+            const userToken = await AsyncStorage.getItem('userToken');
+            const res = await fetch(`${baseServerUrl}/api/event/all/?token=${userToken}`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            });
+            const json = await res.json();
+            setEvents(json);
+        } catch (error) {
+            console.error(error)
+        }
+        setRefreshing(false);
     }
 
     useEffect(() => {
@@ -53,28 +75,15 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
         getEvents();
     }, []);
 
-    const getEvents = async () => {
-        try {
-            const userToken = await AsyncStorage.getItem('userToken');
-            const res = await fetch(`${baseServerUrl}/api/event/all/?token=${userToken}`, {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-            });
-            const json = await res.json();
-            setEvents(json);
-        } catch (error) {
-            console.error(error)
-        }
-        
-    }
+
 
     return(
         <View style={styles.page}>
             {events && (
                 <FlatList
+                    refreshControl={<RefreshControl 
+                        refreshing={refreshing} 
+                        onRefresh={getEvents}/>}
                     data={events}
                     renderItem={({item}) => <EventListItem event={item} image={faker.image.avatar()} user={user} />}
                     keyExtractor={item => item._id}
