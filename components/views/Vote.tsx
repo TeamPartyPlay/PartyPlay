@@ -1,11 +1,13 @@
-import React, { useContext, useState } from 'react';
-import { Text, View, Modal, Button, Image, FlatList, StyleSheet } from "react-native";
+import React, { useContext, useState, useEffect } from 'react';
+import { Text, View, Modal, Button, Image, FlatList, StyleSheet, AsyncStorage } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
 import { SearchBar } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash';
 import ActionBarImage from '../navigation/ActionBarImage';
+import {baseServerUrl} from '../../secret';
+import { IEvent } from '../models/Event';
 
 // tslint:disable-next-line: interface-name
 interface VoteScreenProps {
@@ -22,6 +24,31 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const [output, setOutput] = useState<string>("");
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [image, setImage] = useState<string>("");
+    const [event, setEvent] = useState<IEvent>();
+
+    const getEvent = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        const eventToken = await AsyncStorage.getItem('eventToken');
+        const url = `${baseServerUrl}/api/event?token=${token}&eventToken=${eventToken}`
+        if(token && eventToken){
+          const res = await fetch(url, {
+            method:'GET',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+          })
+          if(res.status === 200){
+            const json = await res.json();
+            setEvent(json);
+          }
+        }
+      }
+      useEffect(() => {
+        getEvent();
+      }, [])
+
+
     const updateSearch = (search) => {
         setValue(search);
     }

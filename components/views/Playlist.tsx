@@ -35,16 +35,11 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
             'Content-Type': 'application/json'
           },
         })
-        console.log(res);
         if(res.status === 200){
-          const text = await res.text();
-          console.log(text)
-          //const json = await res.json();
-          //setEvent(json);
+          const json = await res.json();
+          setEvent(json);
         }
       }
-
-      
     }
 
     useEffect(() => {

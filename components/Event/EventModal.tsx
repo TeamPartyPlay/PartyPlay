@@ -6,7 +6,6 @@ import Modal, { ModalContent, ModalTitle, ModalButton } from 'react-native-modal
 import { IEvent } from '../models/Event';
 import EventStatus from './EventStatus';
 import {baseServerUrl} from '../../secret';
-import { UserContext } from '../providers/User';
 
 
 interface EventListItemProps {
