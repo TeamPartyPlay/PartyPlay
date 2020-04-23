@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { Text, View, Modal, Button, Image, FlatList, StyleSheet } from "react-native";
+import { Text, View, Modal, Button, Image, FlatList, StyleSheet, TouchableOpacity, AsyncStorage } from "react-native";
+import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
 import { SearchBar } from 'react-native-elements';
@@ -25,7 +26,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const updateSearch = (search) => {
         setValue(search);
     }
-    const onSubmit = (event) => {
+    const onSearch = (event) => {
         spotify.search(event.nativeEvent.text, ["track"], {limit: 20}).then(response => logResponse(response.tracks.items))
         setIsVisible(!isVisible)
         setOutput(event.nativeEvent.text)
@@ -36,13 +37,37 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
         }
     }
 
-    const mybuttonclick = (songID) => {
-        const temp = _.filter(modalDisplay, { key: songID })[0]
-        const tempKey = "temp" + temp.key
-        //will be replaced with database insert statement
-        voteDisplay.push(({ imageURL: temp.imageURL, uri: temp.uri, name: temp.name, artist: temp.artist, key: tempKey }))
-        closeModal()
+    const onSubmit = async (songID) => {
+      const temp = _.filter(modalDisplay, { key: songID })[0]
+      const uri = temp.uri
+      try {
+          const userToken = await AsyncStorage.getItem('userToken');
+          const res = await fetch('https://partyplayserver.herokuapp.com/api/event', {
+              method: 'POST',
+              headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  uri
+              })
+          })
+          if(res.status === 200){
+              const json =  await res.json();
+              closeModal();
+          }
+      } catch (error) {
+          console.error(error);
+      }
     }
+
+    // const mybuttonclick = (songID) => {
+    //     const temp = _.filter(modalDisplay, { key: songID })[0]
+    //     const tempKey = "temp" + temp.key
+    //     //will be replaced with database insert statement
+    //     voteDisplay.push(({ imageURL: temp.imageURL, uri: temp.uri, name: temp.name, artist: temp.artist, key: tempKey }))
+    //     closeModal()
+    // }
 
     const closeModal = () => {
         setIsVisible(!isVisible)
@@ -72,7 +97,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                 placeholder="Search Songs, Artists, and Albums"
                 onChangeText={updateSearch}
                 value={value}
-                onSubmitEditing={onSubmit}
+                onSubmitEditing={onSearch}
             />
             <View>
             <Modal
@@ -85,39 +110,216 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                     keyExtractor ={(item) => item.key}
                     data={modalDisplay}
                     renderItem={({ item }) => (
-                        <View style={styles.container}>
-                            <Image
-                                style={styles.albumCover}
-                                source={{uri: item.imageURL}}
-                            />
-                            <View style={styles.subcontainer}>
-                                <Text style={styles.songTitle}>{item.name}</Text>
-                                <Text style={styles.artistName}>{item.artist}</Text>
-                            </View>
-
-
-                            
-                            <Ionicons
+                        <View style={styles.containerCardCard}>
+                            <View style={styles.containerCard}>
+                                <View style={styles.cardBodyCard}>
+                                    <Image
+                                        source={{uri: item.imageURL}}
+                                        style={styles.cardItemImagePlaceCard}
+                                    ></Image>
+                                    
+                                    <View style={styles.bodyContentCard}>
+                                        <Text style={styles.titleStyleCard}>{item.name}</Text>
+                                        <Text style={styles.subtitleStyleCard}>{item.artist}</Text>
+                                        
+                                    </View>
+                                </View>
+                                <Ionicons
                                 style={styles.addButton}
                                 name="md-add-circle" 
                                 size={50} 
                                 color="#ADADB1" 
-                                onPress={() => {mybuttonclick(item.key)}}
+                                onPress={() => {onSubmit(item.key)}}
                             />
+                            </View>
                         </View>
                     )}
                     
                 />
-                <View>
-                    <Button title="Click To Close Modal" onPress = {() => {closeModal()}}/>  
+                <View style={{paddingBottom: 36, backgroundColor: '#33333D'}}>
+                    <TouchableOpacity style={[styles.containerLogin, styles.materialButtonDark]} onPress={closeModal}>
+                        <Text style={styles.captionClose}>Close</Text>
+                    </TouchableOpacity>
                 </View>  
             </Modal>
+            <ScrollView style={styles.containerCardCard}>
+              <View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View><View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View><View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View><View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View><View style={styles.containerCard}>
+                <View style={styles.cardBodyCard}>
+                  <Image
+                    source={require("../../assets/image-asset.png")}
+                    style={styles.cardItemImagePlaceCard}
+                  ></Image>
+                  <View style={styles.bodyContentCard}>
+                    <Text style={styles.titleStyleCard}>Song Name</Text>
+                    <Text style={styles.subtitleStyleCard}>Artist</Text>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
             </View>
         </View>
     )
 
 }
 const styles = StyleSheet.create({
+    captionClose: {
+      color: "#fff",
+      fontSize: 14,
+    },
+    containerLogin: {
+        backgroundColor: "#212121",
+        position: 'absolute',
+        bottom: 0,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingRight: 16,
+        paddingLeft: 16,
+        elevation: 2,
+        minWidth: 88,
+        borderRadius: 2,
+        shadowOffset: {
+            height: 5,
+            width: 5
+        },
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 5
+    },
+    materialButtonDark: {
+        width: '100%',
+        alignItems: "center",
+        justifyContent: "center",
+        height: 36,
+        backgroundColor: "rgba(41,180,115,1)",
+        borderRadius: 100,
+        shadowOffset: {
+          height: 5,
+          width: 5
+        },
+        shadowColor: "rgba(0,0,0,1)",
+        shadowOpacity: 0.3,
+        marginTop: 22,
+      },
+    containerCardCard: {
+        width: '100%',
+      },
+      containerCard: {
+        backgroundColor: "#33333D",
+      },
+      cardBodyCard: {
+        width: '100%',
+        height: 140,
+        flexDirection: "row",
+      },
+      bodyContentCard: {
+        flex: 1,
+        paddingLeft: 5,
+        paddingTop: 20
+      },
+      bodyContentAddCard: {
+        flex: 1,
+        paddingTop: '50%'
+      },
+      titleStyleCard: {
+        color: "#FFF",
+        paddingBottom: 12,
+        fontSize: 24,
+      },
+      subtitleStyleCard: {
+        color: "#FFF",
+        alignSelf: "flex-start",
+        opacity: 0.5,
+        justifyContent: "space-between",
+        paddingTop: 0,
+        fontSize: 14,
+        lineHeight: 16
+      },
+      cardItemImagePlaceCard: {
+        width: 120,
+        height: 120,
+        backgroundColor: "#ccc",
+        margin: 10
+      },
+      actionBodyCard: {
+        width: 359,
+        height: 52,
+        flexDirection: "row"
+      },
+      actionButton1Card: {
+        height: 36,
+        padding: 8
+      },
+      actionText1Card: {
+        color: "#000",
+        opacity: 0.9,
+        fontSize: 14
+      },
+      actionButton2Card: {
+        height: 36,
+        padding: 8
+      },
+      actionText2Card: {
+        color: "#000",
+        opacity: 0.9,
+        fontSize: 14
+      },
     albumCover: {
         width: 70,
         height: 70,

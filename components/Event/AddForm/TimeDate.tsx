@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, DatePickerAndroid, Platform, TimePickerAndroid } from 'react-native';
+import { View, DatePickerAndroid, Platform, TimePickerAndroid, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import Theme from '../../providers/Theme';
 
@@ -67,39 +67,42 @@ const DateTime: React.FC<iDateTime>= ({dateTimeState, title}) => {
             <Text h4>{title}</Text>
         </View>
         }
-        <View style={{}}>
-            <Text h4>{date.toLocaleDateString()}, {date.toLocaleTimeString()}</Text>
+        <View style={styles.materialButtonWithVioletTextRow}>
+            <TouchableOpacity style={styles.container} onPress={() => DatePicker("calendar")}>
+                <Text style={styles.caption}>{date.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.container} onPress={() => TimePicker()}>
+                <Text style={styles.caption}>{date.toLocaleTimeString()}</Text>
+            </TouchableOpacity>
         </View>
-        <View style={{
-            flex: 1, 
-            flexDirection: 'row', 
-            justifyContent:'space-around', 
-            // backgroundColor: "red", 
-            maxHeight:50
-        }}>
-        <View style={{
-            width: 100, 
-            height: 50, 
-        }}>
-            <Button 
-                buttonStyle={{backgroundColor: Theme.colors.secondary}}  
-                title="Date" 
-                onPress={() => DatePicker("calendar")}
-            />
-        </View>
-        <View style={{
-            width: 100, 
-            height: 50,
-        }}>
-            <Button
-                buttonStyle={{backgroundColor: Theme.colors.secondary}}
-                title="Time" 
-                onPress={() => TimePicker()}
-            />
-        </View>
-    </View>
     </>
     )
 }
+
+const styles = StyleSheet.create({
+
+    materialButtonWithVioletTextRow: {
+        height: 36,
+        flexDirection: "row",
+    },
+    container: {
+        backgroundColor: "transparent",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingRight: 16,
+        paddingLeft: 16,
+        width: '50%'
+    },
+    caption: {
+        color: "#29b473",
+        fontSize: 25,
+    },
+    captionClose: {
+        color: "#fff",
+        fontSize: 14,
+    },
+
+});
 
 export default DateTime;

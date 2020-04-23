@@ -1,10 +1,8 @@
 import React, { useState } from "react"
-import { AsyncStorage, Button, View, StyleSheet } from "react-native";
+import { AsyncStorage, Button, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent } from "react-navigation-stack";
 import { Input, Image, Text } from "react-native-elements";
-import MaterialButtonDark from "../MaterialButtonDark";
-import MaterialIconTextbox3 from "../MaterialIconTextbox3";
-import MaterialIconTextbox4 from "../MaterialIconTextbox4";
+import Icon from "react-native-vector-icons/Ionicons";
 
 import ActionBarImage from "../navigation/ActionBarImage";
 
@@ -61,22 +59,22 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
                             style={styles.image}
                         />
                         <Text style={styles.welcomeBack}>Welcome Back</Text>
-                        <MaterialIconTextbox3
-                            style={styles.materialIconTextbox32}
-                            onChangeText={text => setUsername(text)}
-                        />
-                        <MaterialIconTextbox4
-                            style={styles.materialIconTextbox4}
-                            onChangeText={text => setPassword(text)}
-                        />
-                        <MaterialButtonDark
-                            title="Login"
-                            style={styles.materialButtonDark}
-                            onPress={signIn}
-                        />
+                        <View style={[styles.containerText]}>
+                          <Icon name="ios-person" style={styles.iconStyleText}></Icon>
+                          <TextInput placeholder="Username" style={styles.inputStyleText} onChangeText={text => setUsername(text)}></TextInput>
+                        </View>
+                        <View style={[styles.containerText]}>
+                          <Icon name="ios-key" style={styles.iconStyleText}></Icon>
+                          <TextInput placeholder="Password" style={styles.inputStyleText} onChangeText={text => setPassword(text)}></TextInput>
+                        </View>
+                        <TouchableOpacity style={[styles.containerLogin, styles.materialButtonDark]} onPress={signIn}>
+                          <Text style={styles.captionLogin}>Login</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.containerLogin, styles.materialButtonDark]} onPress={signUp}>
+                          <Text style={styles.captionLogin}>Sign Up</Text>
+                        </TouchableOpacity>
                     </View>
                     </View>
-                <Button title="Sign Up!" onPress={signUp} />
                 </View>
                 </View>
             </View>
@@ -85,6 +83,54 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
 }
 
 const styles = StyleSheet.create({
+  containerLogin: {
+    backgroundColor: "#212121",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingRight: 16,
+    paddingLeft: 16,
+    elevation: 2,
+    minWidth: 88,
+    borderRadius: 2,
+    shadowOffset: {
+      height: 5,
+      width: 5
+    },
+    shadowColor: "#000",
+    shadowOpacity: 0.35,
+    shadowRadius: 5
+  },
+  captionLogin: {
+    color: "#fff",
+    fontSize: 14,
+  },
+  containerText: {
+    width: 271,
+    backgroundColor: "transparent",
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  iconStyleText: {
+    color: "#616161",
+    fontSize: 24,
+    paddingLeft: 8,
+    width: 32,
+    height: 24
+  },
+  inputStyleText: {
+    flex: 1,
+    color: "#000",
+    alignSelf: "stretch",
+    marginLeft: 16,
+    paddingTop: 14,
+    paddingRight: 5,
+    paddingBottom: 8,
+    borderColor: "#D9D5DC",
+    borderBottomWidth: 1,
+    fontSize: 16,
+    lineHeight: 16
+  },
     container: {
       width: '100%',
       height: 812
@@ -153,7 +199,6 @@ const styles = StyleSheet.create({
 
 LoginScreen.navigationOptions = {
     headerStyle:{
-        height: 0,
         backgroundColor: '#33333D'
     }
   }
