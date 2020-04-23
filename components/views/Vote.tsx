@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Text, View, Modal, Button, Image, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, Modal, Button, Image, FlatList, StyleSheet, TouchableOpacity, AsyncStorage } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
@@ -13,7 +13,7 @@ interface VoteScreenProps {
     navigation: NavigationStackProp<{name: string}>
 }
 
-// const styles = 
+// const styles =
 
 const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const [modalDisplay, setDisplay] = useState([]);
@@ -26,46 +26,40 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const updateSearch = (search) => {
         setValue(search);
     }
-    const onSubmit = (event) => {
+    const onSearch = (event) => {
         spotify.search(event.nativeEvent.text, ["track"], {limit: 20}).then(response => logResponse(response.tracks.items))
         setIsVisible(!isVisible)
         setOutput(event.nativeEvent.text)
     }
     const logResponse = (res) => {
-        for (let index = 0; index < res.length; index++) {   
+        for (let index = 0; index < res.length; index++) {
             modalDisplay.push({ imageURL: res[index].album.images[1].url, uri: res[index].album.uri, name: res[index].name, artist: res[index].artists[0].name, key: res[index].id })
         }
     }
 
-    const mybuttonclick = async (songID) => {
+    const onSubmit = async (songID) => {
       const temp = _.filter(modalDisplay, { key: songID })[0]
       const uri = temp.uri
       try {
-          const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/add', {
+          const userToken = await AsyncStorage.getItem('userToken');
+          const res = await fetch('https://partyplayserver.herokuapp.com/api/event', {
               method: 'POST',
               headers: {
                   Accept: 'application/json',
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                   uri
               })
           })
           if(res.status === 200){
-              console.log("SUCCESS")
-              // const cookieStr: string = res.headers['map']['set-cookie'];
-              // const tokenStr: string = cookieStr.split(';')[0];
-              // const token: string = tokenStr.split("=")[1];
-              // await AsyncStorage.setItem('userToken', token);
-              // navigate('App');
-          } else {
-              throw Error('Sign Up Failed!')
+              const json =  await res.json();
+              closeModal();
           }
       } catch (error) {
-          console.log(error);
+          console.error(error);
       }
-      closeModal()
-  }
+    }
 
     // const mybuttonclick = (songID) => {
     //     const temp = _.filter(modalDisplay, { key: songID })[0]
@@ -80,9 +74,9 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
         console.log(voteDisplay)
         setDisplay([])
     }
-    
+
     return(
-        
+
         <View>
             <FlatList
                 keyExtractor ={(item) => item.key}
@@ -96,22 +90,22 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                         <Text>{item.name}</Text>
                         <Text>{item.artist}</Text>
                     </View>
-                )} 
+                )}
             />
             <SearchBar
                 round
                 placeholder="Search Songs, Artists, and Albums"
                 onChangeText={updateSearch}
                 value={value}
-                onSubmitEditing={onSubmit}
+                onSubmitEditing={onSearch}
             />
             <View>
             <Modal
-                animationType = {"fade"}  
-                transparent = {false}  
-                visible = {isVisible}  
+                animationType = {"fade"}
+                transparent = {false}
+                visible = {isVisible}
                 onRequestClose = {() =>{} }>
-                
+
                 <FlatList
                     keyExtractor ={(item) => item.key}
                     data={modalDisplay}
@@ -123,30 +117,30 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                                         source={{uri: item.imageURL}}
                                         style={styles.cardItemImagePlaceCard}
                                     ></Image>
-                                    
+
                                     <View style={styles.bodyContentCard}>
                                         <Text style={styles.titleStyleCard}>{item.name}</Text>
                                         <Text style={styles.subtitleStyleCard}>{item.artist}</Text>
-                                        
+
                                     </View>
                                 </View>
                                 <Ionicons
                                 style={styles.addButton}
-                                name="md-add-circle" 
-                                size={50} 
-                                color="#ADADB1" 
-                                onPress={() => {mybuttonclick(item.key)}}
+                                name="md-add-circle"
+                                size={50}
+                                color="#ADADB1"
+                                onPress={() => {onSubmit(item.key)}}
                             />
                             </View>
                         </View>
                     )}
-                    
+
                 />
                 <View style={{paddingBottom: 36, backgroundColor: '#33333D'}}>
                     <TouchableOpacity style={[styles.containerLogin, styles.materialButtonDark]} onPress={closeModal}>
                         <Text style={styles.captionClose}>Close</Text>
                     </TouchableOpacity>
-                </View>  
+                </View>
             </Modal>
             <ScrollView style={styles.containerCardCard}>
               <View style={styles.containerCard}>

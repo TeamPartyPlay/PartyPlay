@@ -3,6 +3,7 @@ import { Button, Image, Text, View, StyleSheet, TouchableOpacity, AsyncStorage }
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { Icon } from 'react-native-elements';
 import ActionBarImage from '../navigation/ActionBarImage';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 type Props = {
@@ -16,36 +17,51 @@ const ProfileScreen: NavigationStackScreenComponent<Props> = props => {
     await AsyncStorage.clear();
     navigate('Auth');
   };
-  
+
     return(
     <View style={ProfileStyles.containerPrime}>
       <View style={[ProfileStyles.container]}>
         <Image
-          source={require("../../assets/users/kopec_david.jpeg")}
+          source={require("../../assets/users/ProfileIMG.png")}
           style={ProfileStyles.cardItemImagePlace}>
         </Image>
-        <View style={ProfileStyles.bodyContent}>
-          <Text style={ProfileStyles.titleStyle}>David Kopec</Text>
-          <Text style={ProfileStyles.subtitleStyle}>Listening to Nickelback @dartmouth</Text>
-        </View>
-        
-        <View style={ProfileStyles.body2}>
-          <Text style={ProfileStyles.bodyText}>
-            BuilderX is a screen design tool which codes React Native for you
-            which design without boundaries, the code is generated simultaneously.
-            Save your designed components as symbol and then simply add it to your
-            design next time. Live preview works on real device. Shout out to the
-            Expo team to make it happen.
-          </Text>
-        </View>
+        <ScrollView>
+          <View style={ProfileStyles.bodyContent}>
+            <Text style={ProfileStyles.titleStyle}>David Kopec</Text>
+            <Text style={ProfileStyles.subtitleStyle}>Listening to Nickelback @dartmouth</Text>
+          </View>
+
+          <View style={ProfileStyles.body2}>
+            <Text style={ProfileStyles.bodyText}>
+              BuilderX is a screen design tool which codes React Native for you
+              which design without boundaries, the code is generated simultaneously.
+              Save your designed components as symbol and then simply add it to your
+              design next time. Live preview works on real device. Shout out to the
+              Expo team to make it happen.BuilderX is a screen design tool which codes React Native for you
+              which design without boundaries, the code is generated simultaneously.
+              Save your designed components as symbol and then simply add it to your
+              design next time. Live preview works on real device. Shout out to the
+              Expo team to make it happen.BuilderX is a screen design tool which codes React Native for you
+              which design without boundaries, the code is generated simultaneously.
+              Save your designed components as symbol and then simply add it to your
+              design next time. Live preview works on real device. Shout out to the
+              Expo team to make it happen.BuilderX is a screen design tool which codes React Native for you
+              which design without boundaries, the code is generated simultaneously.
+              Save your designed components as symbol and then simply add it to your
+              design next time. Live preview works on real device. Shout out to the
+              Expo team to make it happen.
+            </Text>
+          </View>
+        </ScrollView>
+
         <TouchableOpacity style={[ProfileStyles.containerLogin, ProfileStyles.materialButtonDark]} onPress={signOut}>
           <Text style={ProfileStyles.captionClose}>Sign Out</Text>
-      </TouchableOpacity>
+        </TouchableOpacity>
       </View>
     </View>
-      
-    
-    
+
+
+
     )
   }
 
@@ -53,7 +69,7 @@ const ProfileStyles = StyleSheet.create({
   captionClose: {
     color: "#fff",
     fontSize: 14,
-  },  
+  },
   containerLogin: {
     backgroundColor: "#212121",
     position: 'absolute',
@@ -102,6 +118,7 @@ materialButtonDark: {
   },
   cardItemImagePlace: {
     width: "100%",
+    maxHeight: 300,
     backgroundColor: "#ccc",
     minHeight: 210
   },
@@ -165,7 +182,7 @@ materialButtonDark: {
     lineHeight: 20
   }
 })
-  
+
 ProfileScreen.navigationOptions = {
   headerTitle: <ActionBarImage />,
   headerStyle:{
