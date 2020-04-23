@@ -1,9 +1,7 @@
-import React, { FC, useReducer, useState, useContext } from 'react';
+import React, { FC, useState, useContext, useEffect } from 'react';
 import { View, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 import {baseServerUrl} from '../../secret';
-import { UserContext } from '../providers/User';
-import { EventContext } from '../providers/Event';
 
 interface IEventStatus {
     initialStatus: boolean,
@@ -11,11 +9,10 @@ interface IEventStatus {
 }
 
 const EventStatus: FC<IEventStatus> = ({initialStatus, eventId}) => {
-    const [userToken, setUserToken] = useContext(UserContext);
-    const [eventToken, setEventToken] = useContext(EventContext);
-    const [status, setStatus] = useState<boolean>(initialStatus);
+    const [status, setStatus] = useState<boolean>(false);
 
     const changeStatus = async (newStatus: "join" | "exit") => {
+        const userToken = await AsyncStorage.getItem('userToken');
         const res = await fetch(`${baseServerUrl}/api/event/${newStatus}/${eventId}`, {
             method: 'POST',
             headers: {
@@ -26,15 +23,15 @@ const EventStatus: FC<IEventStatus> = ({initialStatus, eventId}) => {
                 token: userToken
             })
         })
-        console.log(res);
         if(res.status === 200){
             if(newStatus === "join"){
                 const cookieStr: string = res.headers['map']['set-cookie'];
                 const tokenStr: string = cookieStr.split(';')[0];
                 const token: string = tokenStr.split("=")[1];
-                setEventToken(token);
+                await AsyncStorage.setItem('eventToken', token)
                 setStatus(true);
             } else if(newStatus === 'exit'){
+                await AsyncStorage.removeItem('eventToken')
                 setStatus(false);
             }
         }

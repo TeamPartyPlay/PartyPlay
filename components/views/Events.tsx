@@ -17,9 +17,26 @@ interface EventsScreenProps {
 }
 
 const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props => {
+    const [user, setUser] = useState(undefined);
     const { navigate } = props.navigation;
     const [events, setEvents] = useState<IEvent[]>();
-    const [userLocation, setLocation] = useState<string>(null)
+    const [userLocation, setLocation] = useState<string>(null);
+
+    const getUser = async () => {
+        const userToken = await AsyncStorage.getItem("userToken");
+        const res = await fetch(`${baseServerUrl}/api/user?token=${userToken}`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+        if(res.status === 200){
+            const json = await res.json();
+            setUser(json);
+        }
+    }
+
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(
             position => {
@@ -32,12 +49,9 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
 
     useEffect(() => {
         // Get all events
+        getUser();
         getEvents();
     }, []);
-
-    useEffect(() => {
-        console.log(userLocation);
-    }, [userLocation])
 
     const getEvents = async () => {
         try {
@@ -62,20 +76,10 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
             {events && (
                 <FlatList
                     data={events}
-                    renderItem={({item}) => <EventListItem event={item} image={faker.image.avatar()}/>}
+                    renderItem={({item}) => <EventListItem event={item} image={faker.image.avatar()} user={user} />}
                     keyExtractor={item => item._id}
                 />
             )}
-            {/*<FlatList
-                data={Array.from({length: 10}, (_, id)=>({
-                    date: faker.date.future(),
-                    image: faker.image.avatar(),
-                    key: faker.name.findName(), 
-                    location: faker.address.streetAddress(true), 
-                }))}
-                renderItem={({item}) => <EventListItem title={item.key} location={item.location} date={item.date} image={item.image}/>}
-                keyExtractor={item => item.key}
-            />*/}
         </View>
     )
 

@@ -4,7 +4,7 @@ import { NavigationStackProp, NavigationStackScreenComponent } from "react-navig
 import { Image, Text } from "react-native-elements";
 import MaterialButtonDark from "../MaterialButtonDark";
 import MaterialIconTextBox from "../MaterialIconTextBox";
-import { UserContext } from "../providers/User";
+import Theme from "../providers/Theme";
 
 
 type Props = {
@@ -12,14 +12,10 @@ type Props = {
 }
 
 const LoginScreen: NavigationStackScreenComponent<Props> = props => {
-    const [userToken, setUserToken] = useContext(UserContext)
+
     const { navigate } = props.navigation;
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-
-    useEffect(() => {
-      console.log({username, password});
-    }, [username, password])
 
     const signUp = async () => {
         navigate('SignUp');
@@ -30,22 +26,19 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
           const res = await fetch('https://partyplayserver.herokuapp.com/api/user/login', {
               method: 'POST',
               headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json'
-              },
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
               body: JSON.stringify({
                   username,
                   password
               })
           });
-          console.log(res.status)
           if(res.status === 200){
-            console.log("Login Successful")
             const cookieStr: string = res.headers['map']['set-cookie'];
             const tokenStr: string = cookieStr.split(';')[0];
             const token: string = tokenStr.split("=")[1];
-            setUserToken(token);
-            navigate('App');
+            AsyncStorage.setItem("userToken", token);
           } else {
             Alert.alert('Login Failed!');
           }
@@ -91,6 +84,13 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
             </View>
         </View>
     )
+}
+
+LoginScreen.navigationOptions = {
+  headerStyle:{
+      height: 0,
+      backgroundColor: Theme.colors.primary
+  }
 }
 
 const styles = StyleSheet.create({
@@ -160,11 +160,6 @@ const styles = StyleSheet.create({
     }
   });
 
-LoginScreen.navigationOptions = {
-    headerStyle:{
-        height: 0,
-        backgroundColor: '#33333D'
-    }
-  }
+
 
 export default LoginScreen;

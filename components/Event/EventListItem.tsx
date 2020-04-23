@@ -12,9 +12,10 @@ interface EventListItemProps {
     navigation?: NavigationStackProp<{name: string}>;
     event: IEvent;
     image: string;
+    user: any;
 }
 
-const EventListItem: React.FC<EventListItemProps> = ({navigation, event, image}) => {
+const EventListItem: React.FC<EventListItemProps> = ({navigation, event, image, user}) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [currentDate, setDate] = useState<Date>(new Date());
     const {name, description, location} = event;
@@ -30,7 +31,7 @@ const EventListItem: React.FC<EventListItemProps> = ({navigation, event, image})
     const toggle = () => setIsVisible(!isVisible);
     return(
         <View>
-            <EventModal openState={[isVisible, setIsVisible]} event={event} image={image} />
+            <EventModal openState={[isVisible, setIsVisible]} event={event} image={image} user={user} />
             <TouchableHighlight onPress = {toggle}>
                 <View style={styles.container}>
                         <Image

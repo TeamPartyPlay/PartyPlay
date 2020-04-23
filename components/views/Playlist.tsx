@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import { Button, View, Text, StyleSheet } from "react-native";
+import React, { useContext, useState, useEffect } from 'react';
+import { Button, View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { 
     NavigationStackProp,
     NavigationStackScreenComponent 
@@ -8,6 +8,8 @@ import { SpotifyContext } from '../providers/Spotify';
 import { MusicControl } from '../providers/Spotify/Player';
 import { Playlist, CreatePlaylistModal } from '../Playlist/Playlist';
 import ActionBarImage from '../navigation/ActionBarImage';
+import { IEvent } from '../models/Event';
+import {baseServerUrl} from '../../secret';
 
 
 // tslint:disable-next-line: interface-name
@@ -19,12 +21,42 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
     const {spotify} = useContext(SpotifyContext);
     const {navigate} = props.navigation;
     const [visible, setVisible]= useState<boolean>(false);
+    const [event, setEvent] = useState<IEvent>(undefined);
+
+    const getEvent = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      const eventToken = await AsyncStorage.getItem('eventToken');
+      const url = `${baseServerUrl}/api/event?token=${token}&eventToken=${eventToken}`
+      if(token && eventToken){
+        const res = await fetch(url, {
+          method:'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+        })
+        console.log(res);
+        if(res.status === 200){
+          const text = await res.text();
+          console.log(text)
+          //const json = await res.json();
+          //setEvent(json);
+        }
+      }
+
+      
+    }
+
+    useEffect(() => {
+      // Get Event
+      getEvent();
+    }, [])
     return(
         <>
             <View style={styles.container}>
                 <View style={styles.group}>
                     <View style={styles.rect}>
-                        <Text style={styles.partyName}>Party Name</Text>
+                        {event && <Text style={styles.partyName}>{event.name}</Text>}
                         <Text style={styles.hosts}>Hosts</Text>
                     </View>
                 </View>

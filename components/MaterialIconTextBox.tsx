@@ -12,8 +12,8 @@ interface IMaterialTextBox {
 const MaterialIconTextBox: FC<IMaterialTextBox> = props => {
     return (
         <View style={[styles.container, props.style]}>
-          <Icon name="ios-key" style={styles.iconStyle}></Icon>
-          <TextInput placeholder="Password" style={styles.inputStyle} onChangeText={props.onChangeText}></TextInput>
+          <Icon name={props.icon} style={styles.iconStyle}></Icon>
+          <TextInput placeholder={props.placeholder} style={styles.inputStyle} onChangeText={props.onChangeText}></TextInput>
         </View>
     );
 }

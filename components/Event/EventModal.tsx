@@ -12,36 +12,24 @@ import { UserContext } from '../providers/User';
 interface EventListItemProps {
     openState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
     event: IEvent
-    image: string
+    image: string,
+    user: any,
 }
 
-const EventModal: FC<EventListItemProps> = ({openState, event, image}) => {
-    const [userToken] = useContext(UserContext);
-    const [user, setUser] = useState(undefined);
-    const {name, location, description} = event;
+const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, location, description, attendees}, image, user}) => {
+
     const [open, setOpen] = openState;
     const [lat, setLat] = useState(44.47816);
     const [lng, setLng] = useState(-73.21265);
     const toggle = () => setOpen(!open);
-
-    const getUser = async () => {
-        const res = await fetch(`${baseServerUrl}/api/user?token=${userToken}`, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-        })
-
-        if(res.status === 200){
-            const json = await res.json();
-            setUser(json);
-        }
-    }
+    const [isAttending, setIsAttending] = useState(false);
 
     useEffect(() => {
-        getUser();
-    }, [])
+        if(user) {
+            setIsAttending(attendees.includes(user._id));
+        }
+        
+    }, [user])
 
     useEffect(() => {
         if(typeof location === "string") {
@@ -77,22 +65,14 @@ const EventModal: FC<EventListItemProps> = ({openState, event, image}) => {
                                 <View style={styles.headerContent}>
                                     <Text style={styles.textStyle}>{name}</Text>
                                     <Text style={styles.noteTextStyle}>{String(location)}</Text>                                    
-                                    <TouchableWithoutFeedback>
-                                        {/*<TouchableOpacity 
-                                            style={styles.actionButton1} 
-                                            // onPress={() => {findCoordinates()}}
-                                        >
-                                            <Text style={styles.actionText1}>GOING</Text>
-                                        </TouchableOpacity>*/}
-                                        {user && <EventStatus 
-                                            eventId={event._id} 
-                                            initialStatus={event.attendees.includes(user._id)} 
-                                        />}
-                                    </TouchableWithoutFeedback>
+                                    <EventStatus 
+                                        eventId={_id} 
+                                        initialStatus={isAttending} 
+                                    />
                                 </View>
                             </View>
                         </View>
-                        <MapView
+                        {/*<MapView
                             style = {styles.mapContainer}
                             provider="google"
                             initialRegion={{
@@ -109,7 +89,7 @@ const EventModal: FC<EventListItemProps> = ({openState, event, image}) => {
                                 pinColor = {"purple"} // any color
                                 title={"Red Square Mardi Gras"}
                             />
-                        </MapView>
+                            </MapView>*/}
                         <View style={styles.body}>
                         <Text style={styles.noteTextStyle}>{description}</Text>
                         </View>
