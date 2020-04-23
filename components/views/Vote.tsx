@@ -13,7 +13,7 @@ interface VoteScreenProps {
     navigation: NavigationStackProp<{name: string}>
 }
 
-// const styles = 
+// const styles =
 
 const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const [modalDisplay, setDisplay] = useState([]);
@@ -32,9 +32,32 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
         setOutput(event.nativeEvent.text)
     }
     const logResponse = (res) => {
-        for (let index = 0; index < res.length; index++) {   
+        for (let index = 0; index < res.length; index++) {
             modalDisplay.push({ imageURL: res[index].album.images[1].url, uri: res[index].album.uri, name: res[index].name, artist: res[index].artists[0].name, key: res[index].id })
         }
+    }
+
+    const upVote = async (songID) => {
+      try {
+        const userToken = await AsyncStorage.getItem('userToken');
+        const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/vote', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: songID
+            })
+        })
+        console.log(res.status)
+        if(res.status === 200){
+            const json =  await res.json();
+            closeModal();
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     const onSubmit = async (songID) => {
@@ -42,16 +65,17 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
       const uri = temp.uri
       try {
           const userToken = await AsyncStorage.getItem('userToken');
-          const res = await fetch('https://partyplayserver.herokuapp.com/api/event', {
+          const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/add', {
               method: 'POST',
               headers: {
                   Accept: 'application/json',
                   'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                  uri
+                  uri: uri
               })
           })
+          console.log(res.status)
           if(res.status === 200){
               const json =  await res.json();
               closeModal();
@@ -74,9 +98,9 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
         console.log(voteDisplay)
         setDisplay([])
     }
-    
+
     return(
-        
+
         <View>
             <FlatList
                 keyExtractor ={(item) => item.key}
@@ -90,7 +114,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                         <Text>{item.name}</Text>
                         <Text>{item.artist}</Text>
                     </View>
-                )} 
+                )}
             />
             <SearchBar
                 round
@@ -101,46 +125,38 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
             />
             <View>
             <Modal
-                animationType = {"fade"}  
-                transparent = {false}  
-                visible = {isVisible}  
+                animationType = {"fade"}
+                transparent = {false}
+                visible = {isVisible}
                 onRequestClose = {() =>{} }>
-                
+
                 <FlatList
                     keyExtractor ={(item) => item.key}
                     data={modalDisplay}
                     renderItem={({ item }) => (
                         <View style={styles.containerCardCard}>
                             <View style={styles.containerCard}>
-                                <View style={styles.cardBodyCard}>
-                                    <Image
-                                        source={{uri: item.imageURL}}
-                                        style={styles.cardItemImagePlaceCard}
-                                    ></Image>
-                                    
-                                    <View style={styles.bodyContentCard}>
-                                        <Text style={styles.titleStyleCard}>{item.name}</Text>
-                                        <Text style={styles.subtitleStyleCard}>{item.artist}</Text>
-                                        
-                                    </View>
+                              <TouchableOpacity style={styles.cardBodyCard} onPress={() => {onSubmit(item.key)}}>
+                                <Image
+                                  source={{uri: item.imageURL}}
+                                  style={styles.cardItemImagePlaceCard}
+                                ></Image>
+
+                                <View style={styles.bodyContentCard}>
+                                  <Text style={styles.titleStyleCard}>{item.name}</Text>
+                                  <Text style={styles.subtitleStyleCard}>{item.artist}</Text>
                                 </View>
-                                <Ionicons
-                                style={styles.addButton}
-                                name="md-add-circle" 
-                                size={50} 
-                                color="#ADADB1" 
-                                onPress={() => {onSubmit(item.key)}}
-                            />
+                              </TouchableOpacity>
                             </View>
                         </View>
                     )}
-                    
+
                 />
                 <View style={{paddingBottom: 36, backgroundColor: '#33333D'}}>
                     <TouchableOpacity style={[styles.containerLogin, styles.materialButtonDark]} onPress={closeModal}>
                         <Text style={styles.captionClose}>Close</Text>
                     </TouchableOpacity>
-                </View>  
+                </View>
             </Modal>
             <ScrollView style={styles.containerCardCard}>
               <View style={styles.containerCard}>
