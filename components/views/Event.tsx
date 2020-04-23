@@ -52,9 +52,7 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
                     'Content-Type': 'multipart/form-data',
                 },
                 body: data
-            })
-            console.log(res.status);
-            console.log(await res.text())
+            });
         }
     }
 

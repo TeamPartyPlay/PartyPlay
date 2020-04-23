@@ -62,7 +62,7 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
             {events && (
                 <FlatList
                     data={events}
-                    renderItem={({item}) => <EventListItem title={item.name} location={item.location} date={item.start} image={faker.image.avatar()}/>}
+                    renderItem={({item}) => <EventListItem event={item} image={faker.image.avatar()}/>}
                     keyExtractor={item => item._id}
                 />
             )}
