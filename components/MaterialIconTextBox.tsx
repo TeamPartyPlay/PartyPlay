@@ -1,14 +1,21 @@
-import React, { Component } from "react";
+import React, { Component, FC } from "react";
 import { StyleSheet, View, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
-function MaterialIconTextbox3(props) {
-  return (
-    <View style={[styles.container, props.style]}>
-      <Icon name="ios-person" style={styles.iconStyle}></Icon>
-      <TextInput placeholder="Username" style={styles.inputStyle}></TextInput>
-    </View>
-  );
+interface IMaterialTextBox {
+    [style: string]: any;
+    icon: string;
+    placeholder: string;
+    onChangeText: (text: string) => void,
+}
+
+const MaterialIconTextBox: FC<IMaterialTextBox> = props => {
+    return (
+        <View style={[styles.container, props.style]}>
+          <Icon name={props.icon} style={styles.iconStyle}></Icon>
+          <TextInput placeholder={props.placeholder} style={styles.inputStyle} onChangeText={props.onChangeText}></TextInput>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -39,4 +46,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MaterialIconTextbox3;
+export default MaterialIconTextBox;

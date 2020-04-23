@@ -17,7 +17,7 @@ const ProfileScreen: NavigationStackScreenComponent<Props> = props => {
     await AsyncStorage.clear();
     navigate('Auth');
   };
-  
+
     return(
     <View style={ProfileStyles.containerPrime}>
       <View style={[ProfileStyles.container]}>
@@ -30,7 +30,7 @@ const ProfileScreen: NavigationStackScreenComponent<Props> = props => {
             <Text style={ProfileStyles.titleStyle}>David Kopec</Text>
             <Text style={ProfileStyles.subtitleStyle}>Listening to Nickelback @dartmouth</Text>
           </View>
-          
+
           <View style={ProfileStyles.body2}>
             <Text style={ProfileStyles.bodyText}>
               BuilderX is a screen design tool which codes React Native for you
@@ -53,15 +53,15 @@ const ProfileScreen: NavigationStackScreenComponent<Props> = props => {
             </Text>
           </View>
         </ScrollView>
-        
+
         <TouchableOpacity style={[ProfileStyles.containerLogin, ProfileStyles.materialButtonDark]} onPress={signOut}>
           <Text style={ProfileStyles.captionClose}>Sign Out</Text>
         </TouchableOpacity>
       </View>
     </View>
-      
-    
-    
+
+
+
     )
   }
 
@@ -69,7 +69,7 @@ const ProfileStyles = StyleSheet.create({
   captionClose: {
     color: "#fff",
     fontSize: 14,
-  },  
+  },
   containerLogin: {
     backgroundColor: "#212121",
     position: 'absolute',
@@ -182,7 +182,7 @@ materialButtonDark: {
     lineHeight: 20
   }
 })
-  
+
 ProfileScreen.navigationOptions = {
   headerTitle: <ActionBarImage />,
   headerStyle:{

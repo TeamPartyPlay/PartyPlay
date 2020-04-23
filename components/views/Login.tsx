@@ -1,10 +1,11 @@
 import React, { useState } from "react"
-import { AsyncStorage, Button, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { AsyncStorage, Button, View, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent } from "react-navigation-stack";
 import { Input, Image, Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import ActionBarImage from "../navigation/ActionBarImage";
+import Theme from "../providers/Theme";
 
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 }
 
 const LoginScreen: NavigationStackScreenComponent<Props> = props => {
+
     const { navigate } = props.navigation;
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -21,30 +23,29 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
     }
 
     const signIn = async () => {
-        try {
-            const res = await fetch('https://partyplayserver.herokuapp.com/api/user/login', {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username,
-                    password
-                })
-            })
-            if(res.status === 200){
-                const cookieStr: string = res.headers['map']['set-cookie'];
-                const tokenStr: string = cookieStr.split(';')[0];
-                const token: string = tokenStr.split("=")[1];
-                await AsyncStorage.setItem('userToken', token);
-                navigate('App');
-            } else {
-                throw Error('Sign Up Failed!')
-            }
-        } catch (error) {
-            console.log(error);
-        }
+      try {
+          const res = await fetch('https://partyplayserver.herokuapp.com/api/user/login', {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+              body: JSON.stringify({
+                  username,
+                  password
+              })
+          });
+          if(res.status === 200){
+            const cookieStr: string = res.headers['map']['set-cookie'];
+            const tokenStr: string = cookieStr.split(';')[0];
+            const token: string = tokenStr.split("=")[1];
+            AsyncStorage.setItem("userToken", token);
+          } else {
+            Alert.alert('Login Failed!');
+          }
+      } catch (error) {
+          console.error(error);
+      }
     }
     return(
         <View style={styles.container}>
@@ -80,6 +81,13 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
             </View>
         </View>
     )
+}
+
+LoginScreen.navigationOptions = {
+  headerStyle:{
+      height: 0,
+      backgroundColor: Theme.colors.primary
+  }
 }
 
 const styles = StyleSheet.create({
@@ -197,10 +205,5 @@ const styles = StyleSheet.create({
     }
   });
 
-LoginScreen.navigationOptions = {
-    headerStyle:{
-        backgroundColor: '#33333D'
-    }
-  }
 
 export default LoginScreen;

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Text, View, Modal, Button, Image, FlatList, StyleSheet, TouchableOpacity, AsyncStorage } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
@@ -7,6 +7,8 @@ import { SearchBar } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash';
 import ActionBarImage from '../navigation/ActionBarImage';
+import {baseServerUrl} from '../../secret';
+import { IEvent } from '../models/Event';
 
 // tslint:disable-next-line: interface-name
 interface VoteScreenProps {
@@ -23,6 +25,31 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const [output, setOutput] = useState<string>("");
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [image, setImage] = useState<string>("");
+    const [event, setEvent] = useState<IEvent>();
+
+    const getEvent = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        const eventToken = await AsyncStorage.getItem('eventToken');
+        const url = `${baseServerUrl}/api/event?token=${token}&eventToken=${eventToken}`
+        if(token && eventToken){
+          const res = await fetch(url, {
+            method:'GET',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+          })
+          if(res.status === 200){
+            const json = await res.json();
+            setEvent(json);
+          }
+        }
+      }
+      useEffect(() => {
+        getEvent();
+      }, [])
+
+
     const updateSearch = (search) => {
         setValue(search);
     }
@@ -136,17 +163,25 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                     renderItem={({ item }) => (
                         <View style={styles.containerCardCard}>
                             <View style={styles.containerCard}>
-                              <TouchableOpacity style={styles.cardBodyCard} onPress={() => {onSubmit(item.key)}}>
-                                <Image
-                                  source={{uri: item.imageURL}}
-                                  style={styles.cardItemImagePlaceCard}
-                                ></Image>
+                                <View style={styles.cardBodyCard}>
+                                    <Image
+                                        source={{uri: item.imageURL}}
+                                        style={styles.cardItemImagePlaceCard}
+                                    ></Image>
 
-                                <View style={styles.bodyContentCard}>
-                                  <Text style={styles.titleStyleCard}>{item.name}</Text>
-                                  <Text style={styles.subtitleStyleCard}>{item.artist}</Text>
+                                    <View style={styles.bodyContentCard}>
+                                        <Text style={styles.titleStyleCard}>{item.name}</Text>
+                                        <Text style={styles.subtitleStyleCard}>{item.artist}</Text>
+
+                                    </View>
                                 </View>
-                              </TouchableOpacity>
+                                <Ionicons
+                                style={styles.addButton}
+                                name="md-add-circle"
+                                size={50}
+                                color="#ADADB1"
+                                onPress={() => {onSubmit(item.key)}}
+                            />
                             </View>
                         </View>
                     )}

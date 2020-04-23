@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableHighlight } from 'react-native-gesture-handler';
-import { withNavigation } from 'react-navigation';
 import { NavigationStackProp } from 'react-navigation-stack';
 
 import EventModal from './EventModal';
+import { IEvent } from '../models/Event';
 
 // tslint:disable-next-line: interface-name
 interface EventListItemProps {
-    navigation: NavigationStackProp<{name: string}>
-    title: string,
-    location: string,
-    date: Date,
-    image: string
+    navigation?: NavigationStackProp<{name: string}>;
+    event: IEvent;
+    image: string;
+    user: any;
 }
 
-const EventListItem: React.FC<EventListItemProps> = ({navigation, title, location, date, image}: EventListItemProps) => {
+const EventListItem: React.FC<EventListItemProps> = ({navigation, event, image, user}) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [currentDate, setDate] = useState<Date>(new Date());
-    const mybuttonclick = (date) => {
+    const {name, description, location} = event;
+    const mybuttonclick = (date: Date) => {
         var msDiff = currentDate.getTime() - date.getTime();    //Future date - current date
         var daysTillEvent = Math.floor(msDiff / (1000 * 60 * 60 * 24)) * -1;
         if(daysTillEvent == 0){
@@ -28,11 +28,9 @@ const EventListItem: React.FC<EventListItemProps> = ({navigation, title, locatio
         }
     }
     const toggle = () => setIsVisible(!isVisible);
-
-    var daysTill = mybuttonclick(date);
     return(
         <View>
-            <EventModal openState={[isVisible, setIsVisible]} title={title} location={location} date={date} image={image} />
+            <EventModal openState={[isVisible, setIsVisible]} event={event} image={image} user={user} />
             <TouchableHighlight onPress = {toggle}>
                 <View style={styles.container}>
                         <Image
@@ -41,11 +39,11 @@ const EventListItem: React.FC<EventListItemProps> = ({navigation, title, locatio
                                 resizeMode="contain"
                             />
                         <View style={styles.subcontainer}>
-                                <Text style={styles.title}>{`${title}'s Birthday Party`}</Text>
+                                <Text style={styles.title}>{name}</Text>
                                 <Text style={styles.location}>{`${location}`}</Text>
                         </View>
                         <View style={styles.dateContainer}> 
-                            <Text style={{color: "white"}}>{daysTill}</Text>
+                            {/*<Text style={{color: "white"}}>{daysTill}</Text>*/}
                         </View>
                 </View>
             </TouchableHighlight>
@@ -54,12 +52,47 @@ const EventListItem: React.FC<EventListItemProps> = ({navigation, title, locatio
 }
 
 const styles = StyleSheet.create({
+    containerLogin: {
+        backgroundColor: "#212121",
+        position: 'absolute',
+        bottom: 0,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingRight: 16,
+        paddingLeft: 16,
+        elevation: 2,
+        minWidth: 88,
+        borderRadius: 2,
+        shadowOffset: {
+            height: 5,
+            width: 5
+        },
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 5
+    },
+    materialButtonDark: {
+        width: '100%',
+        alignItems: "center",
+        justifyContent: "center",
+        height: 36,
+        backgroundColor: "rgba(41,180,115,1)",
+        borderRadius: 100,
+        shadowOffset: {
+          height: 5,
+          width: 5
+        },
+        shadowColor: "rgba(0,0,0,1)",
+        shadowOpacity: 0.3,
+        marginTop: 22,
+      },
     container: {
         flexDirection: "row",
         marginTop: 5,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 15,  
+        marginLeft: 15,
         marginRight: 15,
     },
     containerModal: {
@@ -180,4 +213,4 @@ const styles = StyleSheet.create({
       }
 })
 
-export default withNavigation(EventListItem);
+export default EventListItem;
