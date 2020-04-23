@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableHighlight } from 'react-native-gesture-handler';
-import { withNavigation } from 'react-navigation';
 import { NavigationStackProp } from 'react-navigation-stack';
 
 import EventModal from './EventModal';
+import { IEvent } from '../models/Event';
 
 // tslint:disable-next-line: interface-name
 interface EventListItemProps {
-    navigation: NavigationStackProp<{name: string}>
-    title: string,
-    location: string,
-    date: Date,
-    image: string
+    navigation?: NavigationStackProp<{name: string}>;
+    event: IEvent;
+    image: string;
+    user: any;
 }
 
-const EventListItem: React.FC<EventListItemProps> = ({navigation, title, location, date, image}: EventListItemProps) => {
+const EventListItem: React.FC<EventListItemProps> = ({navigation, event, image, user}) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [currentDate, setDate] = useState<Date>(new Date());
-    const mybuttonclick = (date) => {
+    const {name, description, location} = event;
+    const mybuttonclick = (date: Date) => {
         var msDiff = currentDate.getTime() - date.getTime();    //Future date - current date
         var daysTillEvent = Math.floor(msDiff / (1000 * 60 * 60 * 24)) * -1;
         if(daysTillEvent == 0){
@@ -28,11 +28,9 @@ const EventListItem: React.FC<EventListItemProps> = ({navigation, title, locatio
         }
     }
     const toggle = () => setIsVisible(!isVisible);
-
-    var daysTill = mybuttonclick(date);
     return(
         <View>
-            <EventModal openState={[isVisible, setIsVisible]} title={title} location={location} date={date} image={image} />
+            <EventModal openState={[isVisible, setIsVisible]} event={event} image={image} user={user} />
             <TouchableHighlight onPress = {toggle}>
                 <View style={styles.container}>
                         <Image
@@ -41,11 +39,11 @@ const EventListItem: React.FC<EventListItemProps> = ({navigation, title, locatio
                                 resizeMode="contain"
                             />
                         <View style={styles.subcontainer}>
-                                <Text style={styles.title}>{`${title}'s Birthday Party`}</Text>
+                                <Text style={styles.title}>{name}</Text>
                                 <Text style={styles.location}>{`${location}`}</Text>
                         </View>
-                        <View style={styles.dateContainer}>
-                            <Text style={{color: "white"}}>{daysTill}</Text>
+                        <View style={styles.dateContainer}> 
+                            {/*<Text style={{color: "white"}}>{daysTill}</Text>*/}
                         </View>
                 </View>
             </TouchableHighlight>
@@ -215,4 +213,4 @@ const styles = StyleSheet.create({
       }
 })
 
-export default withNavigation(EventListItem);
+export default EventListItem;

@@ -1,14 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import faker from 'faker';
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, StyleSheet, Alert, TouchableOpacity} from "react-native";
+import { Text, View, FlatList, StyleSheet, Alert, TouchableOpacity, AsyncStorage} from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { EventListItem } from '../Event';
 import ActionBarImage from '../navigation/ActionBarImage';
 import Theme from '../providers/Theme';
+import { baseServerUrl } from '../../secret';
+import { IEvent } from '../models/Event';
 
 const IconComponent = Ionicons;
-
 
 // tslint:disable-next-line: interface-name
 interface EventsScreenProps {
@@ -16,8 +17,26 @@ interface EventsScreenProps {
 }
 
 const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props => {
+    const [user, setUser] = useState(undefined);
     const { navigate } = props.navigation;
-    const [userLocation, setLocation] = useState<string>(null)
+    const [events, setEvents] = useState<IEvent[]>();
+    const [userLocation, setLocation] = useState<string>(null);
+
+    const getUser = async () => {
+        const userToken = await AsyncStorage.getItem("userToken");
+        const res = await fetch(`${baseServerUrl}/api/user?token=${userToken}`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+        if(res.status === 200){
+            const json = await res.json();
+            setUser(json);
+        }
+    }
+
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(
             position => {
@@ -29,21 +48,38 @@ const EventsScreen: NavigationStackScreenComponent<EventsScreenProps> = props =>
     }, [])
 
     useEffect(() => {
-        console.log(userLocation);
-    }, [userLocation])
+        // Get all events
+        getUser();
+        getEvents();
+    }, []);
+
+    const getEvents = async () => {
+        try {
+            const userToken = await AsyncStorage.getItem('userToken');
+            const res = await fetch(`${baseServerUrl}/api/event/all/?token=${userToken}`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            });
+            const json = await res.json();
+            setEvents(json);
+        } catch (error) {
+            console.error(error)
+        }
+        
+    }
 
     return(
         <View style={styles.page}>
-            <FlatList
-                data={Array.from({length: 10}, (_, id)=>({
-                    date: faker.date.future(),
-                    image: faker.image.avatar(),
-                    key: faker.name.findName(),
-                    location: faker.address.streetAddress(true),
-                }))}
-                renderItem={({item}) => <EventListItem title={item.key} location={item.location} date={item.date} image={item.image}/>}
-                keyExtractor={item => item.key}
-            />
+            {events && (
+                <FlatList
+                    data={events}
+                    renderItem={({item}) => <EventListItem event={item} image={faker.image.avatar()} user={user} />}
+                    keyExtractor={item => item._id}
+                />
+            )}
         </View>
     )
 

@@ -1,25 +1,44 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect, useContext } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { View, Text, Image, StyleSheet, Button, Dimensions, Alert} from "react-native"; 
-import { TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import Modal, { ModalContent, ModalTitle, BottomModal, ModalButton } from 'react-native-modals';
+import { View, Text, Image, StyleSheet } from "react-native"; 
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Modal, { ModalContent, ModalTitle, ModalButton } from 'react-native-modals';
+import { IEvent } from '../models/Event';
+import EventStatus from './EventStatus';
+import {baseServerUrl} from '../../secret';
 
 
 interface EventListItemProps {
     openState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
-    title: string,
-    location: string,
-    date: Date,
-    image: string
+    event: IEvent
+    image: string,
+    user: any,
 }
 
-const EventModal: FC<EventListItemProps> = ({openState, title, image, location, date}) => {
-    const [open, setOpen] = openState;
-    const toggle = () => setOpen(!open);
+const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, location, description, attendees}, image, user}) => {
 
-    const findCoordinates = () => {
-        console.log("yeeet")
-    }
+    const [open, setOpen] = openState;
+    const [lat, setLat] = useState(44.47816);
+    const [lng, setLng] = useState(-73.21265);
+    const toggle = () => setOpen(!open);
+    const [isAttending, setIsAttending] = useState(false);
+
+    useEffect(() => {
+        if(user) {
+            setIsAttending(attendees.includes(user._id));
+        }
+        
+    }, [user])
+
+    useEffect(() => {
+        if(typeof location === "string") {
+            setLat(44.47816);
+            setLng(-73.21265);
+        } else if(location){
+            setLat(location.lat);
+            setLng(location.lng);
+        }
+    }, [location])
 
     return(
         <Modal
@@ -30,7 +49,7 @@ const EventModal: FC<EventListItemProps> = ({openState, title, image, location, 
                 align="left"
                 style={{backgroundColor: "#2d2d36", borderBottomColor: "#2d2d36",}}
                 textStyle={{color: "#FFF", }}
-                title= {title}/>}
+                title= {name}/>}
             >
                 <ModalContent
                 style={styles.contentModal}>
@@ -43,20 +62,16 @@ const EventModal: FC<EventListItemProps> = ({openState, title, image, location, 
                                     resizeMode="contain"
                                 ></Image>
                                 <View style={styles.headerContent}>
-                                    <Text style={styles.textStyle}>{`${title}'s Birthday Party`}</Text>
-                                    <Text style={styles.noteTextStyle}>{`${location}`}</Text>
-                                    <TouchableWithoutFeedback>
-                                        <TouchableOpacity 
-                                            style={styles.actionButton1} 
-                                            onPress={() => {findCoordinates()}}
-                                        >
-                                            <Text style={styles.actionText1}>GOING</Text>
-                                        </TouchableOpacity>
-                                    </TouchableWithoutFeedback>
+                                    <Text style={styles.textStyle}>{name}</Text>
+                                    <Text style={styles.noteTextStyle}>{String(location)}</Text>                                    
+                                    <EventStatus 
+                                        eventId={_id} 
+                                        initialStatus={isAttending} 
+                                    />
                                 </View>
                             </View>
                         </View>
-                        <MapView
+                        {/*<MapView
                             style = {styles.mapContainer}
                             provider="google"
                             initialRegion={{
@@ -66,16 +81,16 @@ const EventModal: FC<EventListItemProps> = ({openState, title, image, location, 
                                 longitudeDelta: 0.0421,
                             }}>
                             <Marker 
-                                coordinate = {{latitude: 44.476577,longitude: -73.212398}}
+                                coordinate = {{
+                                    latitude: 44.47816,
+                                    longitude: -73.21265
+                                }}
                                 pinColor = {"purple"} // any color
                                 title={"Red Square Mardi Gras"}
-                                description={"We may not be in New Orleans but we know how to celebrate Mardi Gras like we are located on Bourbon Street. Come join us for our biggest event of the year. Come for live music, giveaways and fun!"}
                             />
-                        </MapView>
+                            </MapView>*/}
                         <View style={styles.body}>
-                            <Text style={styles.noteTextStyle}>
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                            </Text>
+                        <Text style={styles.noteTextStyle}>{description}</Text>
                         </View>
                         <View style={styles.actionBody}>
                             <TouchableOpacity 
