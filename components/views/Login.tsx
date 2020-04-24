@@ -37,6 +37,7 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
             const tokenStr: string = cookieStr.split(';')[0];
             const token: string = tokenStr.split("=")[1];
             AsyncStorage.setItem("userToken", token);
+            navigate('App');
           } else {
             Alert.alert('Login Failed!');
           }
@@ -82,7 +83,6 @@ const LoginScreen: NavigationStackScreenComponent<Props> = props => {
 
 LoginScreen.navigationOptions = {
   headerStyle:{
-      height: 0,
       backgroundColor: Theme.colors.primary
   }
 }

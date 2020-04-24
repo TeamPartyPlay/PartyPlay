@@ -74,7 +74,7 @@ const CreatePlaylistScreen: NavigationStackScreenComponent<Props> = props => {
                     body: JSON.stringify({
                         spotifyId: playlist.id,
                         token: userToken,
-                        eventToken
+                        eventToken: eventToken
                     })
                 })
                 if(res.status === 200){
