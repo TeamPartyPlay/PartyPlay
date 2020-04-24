@@ -71,7 +71,7 @@ const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, locat
                                 </View>
                             </View>
                         </View>
-                        {/*<MapView
+                        <MapView
                             style = {styles.mapContainer}
                             provider="google"
                             initialRegion={{
@@ -88,7 +88,7 @@ const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, locat
                                 pinColor = {"purple"} // any color
                                 title={"Red Square Mardi Gras"}
                             />
-                            </MapView>*/}
+                        </MapView>
                         <View style={styles.body}>
                         <Text style={styles.noteTextStyle}>{description}</Text>
                         </View>
