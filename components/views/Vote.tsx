@@ -1,13 +1,10 @@
 import React, { useContext, useState, useEffect, FC } from 'react';
 import { 
   Text, 
-  View, 
-  Modal, 
-  Button, 
+  View,
   Image, 
   FlatList, 
-  StyleSheet, 
-  TouchableOpacity, 
+  StyleSheet,  
   AsyncStorage, 
   NativeSyntheticEvent, 
   TextInputSubmitEditingEventData 
@@ -16,8 +13,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
 import { SearchBar } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
-import _ from 'lodash';
 import ActionBarImage from '../navigation/ActionBarImage';
 import {baseServerUrl} from '../../secret';
 import { IEvent, IPlaylist, ITrack } from '../models/Event';
@@ -27,8 +22,6 @@ import VoteModal from '../Vote/VoteModal';
 interface VoteScreenProps {
     navigation: NavigationStackProp<{name: string}>
 }
-
-// const styles =
 
 const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
   const [voteDisplay, setVoteDisplay] = useState([]);

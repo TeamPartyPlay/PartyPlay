@@ -1,5 +1,5 @@
 import React, { FC, useState, useContext, useEffect } from 'react';
-import { View, AsyncStorage } from 'react-native';
+import { View, AsyncStorage, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-elements';
 import {baseServerUrl} from '../../secret';
 
@@ -40,12 +40,30 @@ const EventStatus: FC<IEventStatus> = ({initialStatus, eventId}) => {
     return(
         <View>
             {status
-                ? <Button title="exit" onPress={() => changeStatus('exit')} />
-                : <Button title="join" onPress={() => changeStatus('join')} />
+                ? <TouchableOpacity style={styles.eventCardActionButton2} onPress={() => changeStatus('exit')}>
+                    <Text style={styles.eventCardActionText2}>EXIT</Text>
+                  </TouchableOpacity>
+                : <TouchableOpacity style={styles.eventCardActionButton2} onPress={() => changeStatus('join')}>
+                    <Text style={styles.eventCardActionText2}>JOIN</Text>
+                  </TouchableOpacity>
             }
         </View>
     )
 }
+const styles = StyleSheet.create({
+    eventCardActionButton2: {
+      height: 36,
+      padding: 8, 
+      paddingLeft: 0,
+    },
+    eventCardActionText2: {
+      color: "#000",
+      opacity: 0.9,
+      fontSize: 14
+    },
+
+
+});
 
 
 export default EventStatus;

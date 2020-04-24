@@ -57,7 +57,6 @@ const DateTime: React.FC<iDateTime>= ({dateTimeState, title}) => {
             newDate.setMilliseconds(0);
             setDate(newDate);
         }
-        console.log(date)
     }, [date])
 
     return(

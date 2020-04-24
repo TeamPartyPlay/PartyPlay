@@ -12,7 +12,6 @@ const EventImage: FC<IEventImage> = ({ imageState }) => {
     const [image, setImage] = imageState;
 
     useEffect(() => {
-        console.log(image);
     }, [image])
 
     useEffect(() => {
