@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import _ from 'lodash';
 import ActionBarImage from '../navigation/ActionBarImage';
 import {baseServerUrl} from '../../secret';
-import { IEvent } from '../models/Event';
+import { IEvent, IPlaylist } from '../models/Event';
 
 // tslint:disable-next-line: interface-name
 interface VoteScreenProps {
@@ -26,6 +26,8 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [image, setImage] = useState<string>("");
     const [event, setEvent] = useState<IEvent>();
+    const [songs, setSongs] = useState<IPlaylist[]>();
+    const [refreshing, setRefreshing] = useState(false);
 
     const getEvent = async () => {
         const token = await AsyncStorage.getItem('userToken');
@@ -64,6 +66,26 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
         }
     }
 
+    const getSongs = async () => {
+      setRefreshing(true);
+      try {
+          const userToken = await AsyncStorage.getItem('userToken');
+          const eventToken = await AsyncStorage.getItem('eventToken');
+          const res = await fetch(`${baseServerUrl}/api/playlist/?token=${userToken}/?eventToken=${eventToken}`, {
+              method: 'GET',
+              headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+              },
+          });
+          const json = await res.json();
+          setSongs(json);
+      } catch (error) {
+          console.error(error)
+      }
+      setRefreshing(false);
+  }
+
     const upVote = async (songID) => {
       try {
         const userToken = await AsyncStorage.getItem('userToken');
@@ -94,6 +116,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
       const uri = temp.uri
       try {
           const userToken = await AsyncStorage.getItem('userToken');
+          const eventToken = await AsyncStorage.getItem('eventToken');
           const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/add', {
               method: 'POST',
               headers: {
@@ -101,7 +124,9 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                   'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                  uri: uri
+                  uri: uri,
+                  token: userToken,
+                  eventToken
               })
           })
           console.log(res.status)
@@ -188,6 +213,16 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                 </View>
             </Modal>
             <ScrollView style={styles.containerCardCard}>
+            {songs && (
+                <FlatList
+                    refreshControl={<RefreshControl 
+                        refreshing={refreshing} 
+                        onRefresh={getSongs}/>}
+                    data={songs}
+                    renderItem={({item}) => <EventListItem event={item} image={faker.image.avatar()} user={user} />}
+                    keyExtractor={item => item._id}
+                />
+            )}
               <View style={styles.containerCard}>
                 <View style={styles.cardBodyCard}>
                   <Image

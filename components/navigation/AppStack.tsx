@@ -32,7 +32,7 @@ const MapStack = createStackNavigator({Map: View.MapScreen}, {cardStyle: {backgr
 const AppStack = createBottomTabNavigator(
     {
         Events: EventStack,
-        Map: MapStack, 
+        //Map: MapStack, 
         Playlist: PlaylistStack,
         Vote: VoteStack,
         //Activity: ActivityStack, 
