@@ -26,6 +26,7 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
     const [visible, setVisible]= useState<boolean>(false);
     const [event, setEvent] = useState<IEvent>(undefined);
     const [playlist, setPlaylist] = useState<SpotifyApi.SinglePlaylistResponse>(undefined);
+    const [owner, setOwner] = useState();
 
     const getEvent = async () => {
       const token = await AsyncStorage.getItem('userToken');
@@ -46,13 +47,39 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
       }
     }
 
+    const getOwner = async () => {
+      const token = await AsyncStorage.getItem('userToken');
+      const eventToken = await AsyncStorage.getItem('eventToken');
+      const url = `${baseServerUrl}/api/user/${event.owner}`
+      if(token && eventToken){
+        const res = await fetch(url, {
+          method:'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+        })
+        if(res.status === 200){
+          const json = await res.json();
+          setOwner(json);
+        }
+      }
+    }
+
+
     useEffect(() => {
-      if(spotify.getAccessToken() && event && typeof event?.playlist !== 'string'){
+      if(spotify.getAccessToken() && event && event?.playlist !== null){
         spotify.getPlaylist(event.playlist.spotifyId, {}, (err, res) => {
           setPlaylist(res);
         })
       }
     }, [spotify, event]);
+
+    useEffect(() => {
+      if(event) {
+        getOwner();
+      }
+    }, [event])
 
     useEffect(() => {
       // Get Event
@@ -64,7 +91,7 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
                 <View style={styles.group}>
                     <View style={styles.rect}>
                         {event && <Text style={styles.partyName}>{event.name}</Text>}
-                        {event && <Text style={styles.hosts}>{event.owner}</Text>}
+                        {owner && <Text style={styles.hosts}>{owner.name}</Text>}
                     </View>
                 </View>
             </View>

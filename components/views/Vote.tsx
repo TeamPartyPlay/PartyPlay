@@ -79,6 +79,10 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
   }
 
   useEffect(() => {
+    getPlaylist();
+  }, [isVisible])
+
+  useEffect(() => {
     getEvent();
     getPlaylist();
   }, []);
