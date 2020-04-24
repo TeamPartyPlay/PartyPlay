@@ -55,6 +55,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
   }
 
   const getPlaylist = async () => {
+    setRefreshing(true);
     const token = await AsyncStorage.getItem('userToken');
     const eventToken = await AsyncStorage.getItem('eventToken');
     const url = `${baseServerUrl}/api/playlist?token=${token}&eventToken=${eventToken}`
@@ -68,10 +69,10 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
       })
       if(res.status === 200){
         const json = await res.json();
-        console.log(json)
         setPlaylist(json);
       }
     }
+    setRefreshing(false);
   }
 
   useEffect(() => {
@@ -126,7 +127,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
               style={styles.containerCardCard}
               refreshControl={<RefreshControl 
                 refreshing={refreshing} 
-                onRefresh={getEvent}/>}>
+                onRefresh={getPlaylist}/>}>
               {playlist &&               
               <FlatList
                 data={playlist.tracks}
