@@ -67,6 +67,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const upVote = async (songID) => {
       try {
         const userToken = await AsyncStorage.getItem('userToken');
+        const eventToken = await AsyncStorage.getItem('eventToken');
         const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/vote', {
             method: 'POST',
             headers: {
@@ -74,10 +75,11 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              id: songID
+              id: songID,
+              token: userToken,
+              eventToken
             })
         })
-        console.log(res.status)
         if(res.status === 200){
             const json =  await res.json();
             closeModal();
@@ -111,14 +113,6 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
           console.error(error);
       }
     }
-
-    // const mybuttonclick = (songID) => {
-    //     const temp = _.filter(modalDisplay, { key: songID })[0]
-    //     const tempKey = "temp" + temp.key
-    //     //will be replaced with database insert statement
-    //     voteDisplay.push(({ imageURL: temp.imageURL, uri: temp.uri, name: temp.name, artist: temp.artist, key: tempKey }))
-    //     closeModal()
-    // }
 
     const closeModal = () => {
         setIsVisible(!isVisible)

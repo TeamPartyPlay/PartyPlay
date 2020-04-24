@@ -21,7 +21,7 @@ const ProfileStack = createStackNavigator({Profile: View.ProfileScreen}, {cardSt
 
 const ActivityStack = createStackNavigator({Activity: View.ActivityScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
 
-const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen}, {cardStyle: {backgroundColor: Theme.colors.primary }});
+const PlaylistStack = createStackNavigator({Playlist: View.PlaylistScreen, CreatePlaylist: View.CreatePlaylistScreen}, {cardStyle: {backgroundColor: Theme.colors.primary }});
 
 const EventStack = createStackNavigator({Events: View.EventsScreen, Event: View.EventScreen}, {cardStyle: {backgroundColor: Theme.colors.primary}});
 
@@ -35,7 +35,6 @@ const AppStack = createBottomTabNavigator(
         //Map: MapStack, 
         Playlist: PlaylistStack,
         Vote: VoteStack,
-        // tslint:disable-next-line: object-literal-sort-keys
         //Activity: ActivityStack, 
         Profile: ProfileStack
     },

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Button, View, Text, StyleSheet, AsyncStorage, ScrollView, Image } from "react-native";
+import { Button, View, Text, StyleSheet, AsyncStorage, ScrollView, Image, FlatList } from "react-native";
 import { 
     NavigationStackProp,
     NavigationStackScreenComponent 
@@ -10,6 +10,9 @@ import { Playlist, CreatePlaylistModal } from '../Playlist/Playlist';
 import ActionBarImage from '../navigation/ActionBarImage';
 import { IEvent } from '../models/Event';
 import {baseServerUrl} from '../../secret';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
+import Theme from '../providers/Theme';
 
 
 // tslint:disable-next-line: interface-name
@@ -22,6 +25,7 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
     const {navigate} = props.navigation;
     const [visible, setVisible]= useState<boolean>(false);
     const [event, setEvent] = useState<IEvent>(undefined);
+    const [playlist, setPlaylist] = useState<SpotifyApi.SinglePlaylistResponse>(undefined);
 
     const getEvent = async () => {
       const token = await AsyncStorage.getItem('userToken');
@@ -43,6 +47,14 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
     }
 
     useEffect(() => {
+      if(spotify.getAccessToken() && event && typeof event?.playlist !== 'string'){
+        spotify.getPlaylist(event.playlist.spotifyId, {}, (err, res) => {
+          setPlaylist(res);
+        })
+      }
+    }, [spotify, event]);
+
+    useEffect(() => {
       // Get Event
       getEvent();
     }, [])
@@ -52,94 +64,76 @@ const PlaylistScreen: NavigationStackScreenComponent<Props> = props => {
                 <View style={styles.group}>
                     <View style={styles.rect}>
                         {event && <Text style={styles.partyName}>{event.name}</Text>}
-                        <Text style={styles.hosts}>Hosts</Text>
+                        {event && <Text style={styles.hosts}>{event.owner}</Text>}
                     </View>
                 </View>
             </View>
             <MusicControl />
             <ScrollView style={styles.containerCardCard}>
-              <View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View><View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View><View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View><View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View><View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View>
+              {playlist?.tracks?.items !== undefined &&
+               <FlatList
+                  data={playlist.tracks.items}
+                  renderItem={({item}) => <SpotifyItem item={item} />}
+                  keyExtractor={item => item.track.id}
+                />
+              }
             </ScrollView>
             {!spotify.getAccessToken() && <SpotifyButton />}
-            <Playlist />
             
             {/* <Button title ="Create Playlist" onPress={()=> {setVisible(!visible)}} /> */}
             <CreatePlaylistModal visible={visible} setVisible={setVisible}/>
-            
-            {/*
-            
-            */}
         </>
     )
 }
+
+PlaylistScreen.navigationOptions = ({navigation, screenProps}) => ({
+  headerTitle: <ActionBarImage/>,
+  headerRight: () => {
+    return (<TouchableOpacity style={styles.actionButton1} onPress={() => navigation.navigate('CreatePlaylist')}>
+          <Ionicons name={`md-add`} style={styles.actionText1}/>
+      </TouchableOpacity>
+  )},
+  headerStyle:{
+      backgroundColor: Theme.colors.primary,
+      height: 75,
+  }
+})
+
+const SpotifyItem: React.FC<{item: SpotifyApi.PlaylistTrackObject}> = ({item}) => {
+  const {album, artists, name} = item.track;
+  return(
+    <View style={styles.containerCard}>
+      <View style={styles.cardBodyCard}>
+          <Image
+            source={{uri: album.images[0].url}}
+            style={styles.cardItemImagePlaceCard}
+          />
+        <View style={styles.bodyContentCard}>
+          <Text style={styles.titleStyleCard}>{name}</Text>
+          <Text style={styles.subtitleStyleCard}>{artists[0].name}</Text>
+        </View>
+      </View>
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
+  actionButton1: {
+    height: 36,
+    width: '100%',
+    // tslint:disable-next-line: object-literal-sort-keys
+    padding: 8,
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+  },
+  actionText1: {
+    color: "#29b473",
+    opacity: 0.9,
+    fontSize: 35
+  },
   containerLogin: {
     backgroundColor: "#212121",
     position: 'absolute',
@@ -244,13 +238,7 @@ containerCardCard: {
     }
   });
 
-PlaylistScreen.navigationOptions = {
-    headerTitle: <ActionBarImage />,
-    headerStyle:{
-        height: 75,
-        backgroundColor: '#33333D'
-    }
-  }
+
 const SpotifyButton = props => {
     const {getAuthorizationCode} = useContext(SpotifyContext);
     return(

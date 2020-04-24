@@ -2,11 +2,8 @@ import React, { useState } from "react"
 import { AsyncStorage, Button, View, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent } from "react-navigation-stack";
 import { Input, Image, Text } from "react-native-elements";
-import Icon from "react-native-vector-icons/Ionicons";
-
-import ActionBarImage from "../navigation/ActionBarImage";
+import { Ionicons as Icon } from "@expo/vector-icons";
 import Theme from "../providers/Theme";
-
 
 type Props = {
     navigation: NavigationStackProp<{name: string}>

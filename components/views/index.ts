@@ -8,10 +8,12 @@ import VoteScreen from './Vote';
 import PlaylistScreen from './Playlist';
 import ProfileScreen from './Profile'
 import SignUpScreen from './SignUp'
+import CreatePlaylistScreen from './CreatePlaylist';
 
 
 export {
     ActivityScreen,
+    CreatePlaylistScreen,
     HomeScreen,
     ProfileScreen,
     PlaylistScreen,
