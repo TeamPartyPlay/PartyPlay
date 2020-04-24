@@ -162,12 +162,16 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     )
 }
 
-const PlaylistItem: FC<{track: ITrack}> = ({track:{spotifyId}}) => {
+const PlaylistItem: FC<{track: ITrack}> = ({track:{uri}}) => {
   const {spotify} = useContext(SpotifyContext);
   const [track, setTrack] = useState<SpotifyApi.SingleTrackResponse>();
   useEffect(() => {
-    if(spotifyId){
-      spotify.getTrack(spotifyId).then(res => setTrack(res));
+    console.log({uri});
+    if(uri){
+      const id = uri.split(':').pop();
+      spotify.getTrack(id)
+      .then(res => setTrack(res))
+      .catch(err => console.log(err));
     }
   }, [])
   return(

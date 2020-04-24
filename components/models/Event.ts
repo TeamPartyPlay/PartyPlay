@@ -6,7 +6,7 @@ interface IBase {
 }
 
 interface ITrack extends IBase {
-    spotifyId: string,
+    uri: string,
     votes: string[]
 }
 
