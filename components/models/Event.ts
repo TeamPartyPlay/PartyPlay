@@ -5,9 +5,14 @@ interface IBase {
     updatedAt: Date;
 }
 
+interface ITrack extends IBase {
+    spotifyId: string,
+    votes: string[]
+}
+
 interface IPlaylist extends IBase {
     spotifyId: string,
-    tracks: string[] | null,
+    tracks: ITrack[] | null,
 }
 
 interface ILocation extends IBase {
@@ -33,5 +38,5 @@ interface IEvent {
 }
 
 export {
-    IPlaylist, ILocation, IEvent
+    IPlaylist, ILocation, IEvent, ITrack
 }
