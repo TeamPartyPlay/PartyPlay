@@ -7,16 +7,18 @@ import {
   StyleSheet,  
   AsyncStorage, 
   NativeSyntheticEvent, 
-  TextInputSubmitEditingEventData 
+  TextInputSubmitEditingEventData, 
+  RefreshControl
 } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
-import { SearchBar } from 'react-native-elements';
+import { SearchBar, Button } from 'react-native-elements';
 import ActionBarImage from '../navigation/ActionBarImage';
 import {baseServerUrl} from '../../secret';
 import { IEvent, IPlaylist, ITrack } from '../models/Event';
 import VoteModal from '../Vote/VoteModal';
+import { Ionicons } from '@expo/vector-icons';
 
 // tslint:disable-next-line: interface-name
 interface VoteScreenProps {
@@ -31,6 +33,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
   const [event, setEvent] = useState<IEvent>();
   const [results, setResults] = useState<SpotifyApi.SearchResponse>();
   const [playlist, setPlaylist] = useState<IPlaylist>();
+  const [refreshing, setRefreshing] = useState(false);
 
   const getEvent = async () => {
     const token = await AsyncStorage.getItem('userToken');
@@ -89,33 +92,6 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     spotify.search(e.nativeEvent.text, ["track"], {limit: 20})
       .then(response => setResults(response));
   }
-
-    const upVote = async (songID) => {
-      try {
-        const userToken = await AsyncStorage.getItem('userToken');
-        const eventToken = await AsyncStorage.getItem('eventToken');
-        const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/vote', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              id: songID,
-              token: userToken,
-              eventToken
-            })
-        })
-        if(res.status === 200){
-            const json =  await res.json();
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-
-
     return(
 
         <View>
@@ -146,7 +122,11 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
               searchState={[value, setValue]}
               />}
               
-            <ScrollView style={styles.containerCardCard}>
+            <ScrollView 
+              style={styles.containerCardCard}
+              refreshControl={<RefreshControl 
+                refreshing={refreshing} 
+                onRefresh={getEvent}/>}>
               {playlist &&               
               <FlatList
                 data={playlist.tracks}
@@ -159,12 +139,37 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     )
 }
 
-const PlaylistItem: FC<{track: ITrack}> = ({track:{uri}}) => {
+const PlaylistItem: FC<{track: ITrack}> = ({track:{_id, uri, votes}}) => {
   const {spotify} = useContext(SpotifyContext);
   const [track, setTrack] = useState<SpotifyApi.SingleTrackResponse>();
+
+  const vote = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      const eventToken = await AsyncStorage.getItem('eventToken');
+      const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/vote', {
+          method: 'POST',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: _id,
+            token: userToken,
+            eventToken
+          })
+      })
+      console.log(res);
+      if(res.status === 200){
+          const json =  await res.json();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
-    console.log({uri});
-    if(uri){
+    if(uri) {
       const id = uri.split(':').pop();
       spotify.getTrack(id)
       .then(res => setTrack(res))
@@ -183,6 +188,16 @@ const PlaylistItem: FC<{track: ITrack}> = ({track:{uri}}) => {
           <Text style={styles.titleStyleCard}>{track.name}</Text>
           <Text style={styles.subtitleStyleCard}>{track.artists[0].name}</Text>
         </View>
+        <View>
+          <Ionicons
+            name="md-add-circle"
+            size={50}
+            color="#ADADB1"
+            onPress={vote}
+          />
+          <Text style={styles.subtitleStyleCard}>{votes.length}</Text>
+        </View>
+
       </View>}
       
     </View>
@@ -257,6 +272,15 @@ const styles = StyleSheet.create({
       subtitleStyleCard: {
         color: "#FFF",
         alignSelf: "flex-start",
+        opacity: 0.5,
+        justifyContent: "space-between",
+        paddingTop: 0,
+        fontSize: 14,
+        lineHeight: 16
+      },
+      voteStyleCard: {
+        color: "#FFF",
+        alignSelf: "flex-end",
         opacity: 0.5,
         justifyContent: "space-between",
         paddingTop: 0,
