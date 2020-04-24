@@ -1,17 +1,5 @@
-import React, { useContext, useState, useEffect, FC } from 'react';
-import {
-  Text,
-  View,
-  Modal,
-  Button,
-  Image,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  AsyncStorage,
-  NativeSyntheticEvent,
-  TextInputSubmitEditingEventData
-} from "react-native";
+import React, { useContext, useState, useEffect } from 'react';
+import { Text, View, Modal, Button, Image, FlatList, StyleSheet, TouchableOpacity, AsyncStorage, RefreshControl } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
@@ -21,7 +9,7 @@ import _ from 'lodash';
 import ActionBarImage from '../navigation/ActionBarImage';
 import {baseServerUrl} from '../../secret';
 import { IEvent, IPlaylist, ITrack } from '../models/Event';
-import VoteModal from '../Vote/VoteModal';
+import SongListItem from '../Playlist/SongListItem';
 
 // tslint:disable-next-line: interface-name
 interface VoteScreenProps {
@@ -39,62 +27,46 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [image, setImage] = useState<string>("");
     const [event, setEvent] = useState<IEvent>();
-    const [songs, setSongs] = useState<IPlaylist[]>();
+    const [songs, setSongs] = useState<ITrack[]>();
     const [refreshing, setRefreshing] = useState(false);
 
-  const getEvent = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    const eventToken = await AsyncStorage.getItem('eventToken');
-    const url = `${baseServerUrl}/api/event?token=${token}&eventToken=${eventToken}`
-    if(token && eventToken){
-      const res = await fetch(url, {
-        method:'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-      })
-      if(res.status === 200){
-        const json = await res.json();
-        setEvent(json);
+    const getEvent = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        const eventToken = await AsyncStorage.getItem('eventToken');
+        const url = `${baseServerUrl}/api/event?token=${token}&eventToken=${eventToken}`
+        if(token && eventToken){
+          const res = await fetch(url, {
+            method:'GET',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+          })
+          if(res.status === 200){
+            const json = await res.json();
+            setEvent(json);
+          }
+        }
       }
+      useEffect(() => {
+        getEvent();
+      }, [])
+
+
+    const updateSearch = (search) => {
+        setValue(search);
     }
-  }
-
-  const getPlaylist = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    const eventToken = await AsyncStorage.getItem('eventToken');
-    const url = `${baseServerUrl}/api/playlist?token=${token}&eventToken=${eventToken}`
-    if(token && eventToken){
-      const res = await fetch(url, {
-        method:'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-      })
-      if(res.status === 200){
-        const json = await res.json();
-        console.log(json)
-        setPlaylist(json);
-      }
+    const onSearch = (event) => {
+      spotify.getTrack(event.nativeEvent.text)
+        spotify.search(event.nativeEvent.text, ["track"], {limit: 20}).then(response => logResponse(response.tracks.items))
+        setIsVisible(!isVisible)
+        setOutput(event.nativeEvent.text)
     }
-  }
-
-  useEffect(() => {
-    getEvent();
-    getPlaylist();
-  }, []);
-
-  useEffect(() => {
-    if(results) setIsVisible(true);
-  }, [results]);
-
-
-  const onSearch = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
-    spotify.search(e.nativeEvent.text, ["track"], {limit: 20})
-      .then(response => setResults(response));
-  }
+    const logResponse = (res) => {
+        for (let index = 0; index < res.length; index++) {
+            modalDisplay.push({ imageURL: res[index].album.images[1].url, uri: res[index].album.uri, name: res[index].name, artist: res[index].artists[0].name, key: res[index].id })
+        }
+    }
 
     const getSongs = async () => {
       setRefreshing(true);
@@ -110,6 +82,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
           });
           const json = await res.json();
           setSongs(json);
+          console.log("yeey")
       } catch (error) {
           console.error(error)
       }
@@ -134,6 +107,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
         })
         if(res.status === 200){
             const json =  await res.json();
+            closeModal();
         }
       } catch (error) {
         console.error(error);
@@ -168,6 +142,11 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
       }
     }
 
+    const closeModal = () => {
+        setIsVisible(!isVisible)
+        console.log(voteDisplay)
+        setDisplay([])
+    }
 
     return(
 
@@ -189,130 +168,70 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
             <SearchBar
                 round
                 placeholder="Search Songs, Artists, and Albums"
-                onChangeText={text => setValue(text)}
+                onChangeText={updateSearch}
                 value={value}
                 onSubmitEditing={onSearch}
             />
-            {results && <VoteModal
-              openState={[isVisible, setIsVisible]}
-              resultsState={[results, setResults]}
-              searchState={[value, setValue]}
-              />}
+            <View>
+            <Modal
+                animationType = {"fade"}
+                transparent = {false}
+                visible = {isVisible}
+                onRequestClose = {() =>{} }>
 
-            <ScrollView style={styles.containerCardCard}>
-            {songs && (
                 <FlatList
-                    refreshControl={<RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={getSongs}/>}
-                    data={songs}
-                    renderItem={({item}) => <EventListItem event={item} image={faker.image.avatar()} user={user} />}
-                    keyExtractor={item => item._id}
+                    keyExtractor ={(item) => item.key}
+                    data={modalDisplay}
+                    renderItem={({ item }) => (
+                        <View style={styles.containerCardCard}>
+                            <View style={styles.containerCard}>
+                                <View style={styles.cardBodyCard}>
+                                    <Image
+                                        source={{uri: item.imageURL}}
+                                        style={styles.cardItemImagePlaceCard}
+                                    ></Image>
+
+                                    <View style={styles.bodyContentCard}>
+                                        <Text style={styles.titleStyleCard}>{item.name}</Text>
+                                        <Text style={styles.subtitleStyleCard}>{item.artist}</Text>
+
+                                    </View>
+                                </View>
+                                <Ionicons
+                                style={styles.addButton}
+                                name="md-add-circle"
+                                size={50}
+                                color="#ADADB1"
+                                onPress={() => {onSubmit(item.key)}}
+                            />
+                            </View>
+                        </View>
+                    )}
+
                 />
-            )}
-              <View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
+                <View style={{paddingBottom: 36, backgroundColor: '#33333D'}}>
+                    <TouchableOpacity style={[styles.containerLogin, styles.materialButtonDark]} onPress={closeModal}>
+                        <Text style={styles.captionClose}>Close</Text>
+                    </TouchableOpacity>
                 </View>
-              </View>
-              <View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View><View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View><View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View><View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View><View style={styles.containerCard}>
-                <View style={styles.cardBodyCard}>
-                  <Image
-                    source={require("../../assets/image-asset.png")}
-                    style={styles.cardItemImagePlaceCard}
-                  ></Image>
-                  <View style={styles.bodyContentCard}>
-                    <Text style={styles.titleStyleCard}>Song Name</Text>
-                    <Text style={styles.subtitleStyleCard}>Artist</Text>
-                  </View>
-                </View>
-              </View>
-            </ScrollView>
+            </Modal>
+            <View style={styles.containerCardCard}>
+              {songs && (
+                  <FlatList
+                      refreshControl={<RefreshControl 
+                          refreshing={refreshing} 
+                          onRefresh={getSongs}/>}
+                      data={songs}
+                      renderItem={({item}) => <SongListItem track={item}/>}
+                      keyExtractor={item => item._id}
+                  />
+              )}
+            </View>
+            </View>
         </View>
     )
+
 }
-
-const PlaylistItem: FC<{track: ITrack}> = ({track:{uri}}) => {
-  const {spotify} = useContext(SpotifyContext);
-  const [track, setTrack] = useState<SpotifyApi.SingleTrackResponse>();
-  useEffect(() => {
-    console.log({uri});
-    if(uri){
-      const id = uri.split(':').pop();
-      spotify.getTrack(id)
-      .then(res => setTrack(res))
-      .catch(err => console.log(err));
-    }
-  }, [])
-  return(
-    <View style={styles.containerCard}>
-      {track &&
-      <View style={styles.cardBodyCard}>
-        <Image
-          source={{uri: track.album.images[0].url}}
-          style={styles.cardItemImagePlaceCard}
-        ></Image>
-        <View style={styles.bodyContentCard}>
-          <Text style={styles.titleStyleCard}>{track.name}</Text>
-          <Text style={styles.subtitleStyleCard}>{track.artists[0].name}</Text>
-        </View>
-      </View>}
-
-    </View>
-  )
-}
-
 const styles = StyleSheet.create({
     captionClose: {
       color: "#fff",

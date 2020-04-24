@@ -20,9 +20,9 @@ const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, locat
     const [open, setOpen] = openState;
     const [lat, setLat] = useState(44.47816);
     const [lng, setLng] = useState(-73.21265);
+    
     const toggle = () => {
       setOpen(!open);
-      console.log("yeet");
     }
     const [isAttending, setIsAttending] = useState(false);
 
@@ -38,8 +38,8 @@ const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, locat
             setLat(10);
             setLng(-10);
         } else if(location){
-            setLat(0);
-            setLng(0);
+            setLat(location.lat);
+            setLng(location.lat);
         }
     }, [location])
 
@@ -60,8 +60,8 @@ const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, locat
                   style={styles.mapView1}
                   provider="google"
                   initialRegion={{
-                    latitude: 0,
-                    longitude: 0,
+                    latitude: lat,
+                    longitude: lng,
                     latitudeDelta: 0.0222,
                     longitudeDelta: 0.0421,
                 }}></MapView>
