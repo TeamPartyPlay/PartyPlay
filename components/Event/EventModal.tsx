@@ -15,7 +15,7 @@ interface EventListItemProps {
     user: any,
 }
 
-const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, location, description, attendees}, image, user}) => {
+const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, location, description, attendees, start}, image, user}) => {
 
     const [open, setOpen] = openState;
     const [lat, setLat] = useState(44.47816);
@@ -35,9 +35,8 @@ const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, locat
             setLat(44.47816);
             setLng(-73.21265);
         } else if(location){
-            console.log(location.lat)
-            setLat(99);
-            setLng(location.lng);
+            setLat(44.47816);
+            setLng(-73.21265);
         }
     }, [location])
 
@@ -64,11 +63,21 @@ const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, locat
                   longitude: lng,
                   latitudeDelta: 0.0222,
                   longitudeDelta: 0.0421,
-              }}></MapView>
+              }}>
+                <Marker 
+                coordinate = {{latitude: 44.476577,longitude: -73.212398}}
+                pinColor = {"purple"} // any color
+                title={"Red Square Mardi Gras"}
+                description={"We may not be in New Orleans but we know how to celebrate Mardi Gras like we are located on Bourbon Street. Come join us for our biggest event of the year. Come for live music, giveaways and fun!"}
+            />
+              </MapView>
             </View>
             <View style={styles.eventCardContainer}>
-              <View style={styles.eventCardBodyContent}>
-                <Text style={styles.eventCardTitleStyle}>{name}</Text>
+              <View style={{justifyContent: "space-between", flexDirection: "row",}}>
+                <View style={styles.eventCardBodyContent}>
+                  <Text style={styles.eventCardTitleStyle}>{name}</Text>
+                  <Text style={styles.eventCardSubtitleStyle}>{start}</Text>
+                </View>
                 <EventStatus 
                 eventId={_id} 
                 initialStatus={isAttending}/>
@@ -133,8 +142,7 @@ const styles = StyleSheet.create({
         width: '100%',
       },
       eventCardBodyContent: {
-        justifyContent: "space-between",
-        flexDirection: "row",
+        flexDirection: 'column',
         padding: 16,
         paddingTop: 24,
       },
