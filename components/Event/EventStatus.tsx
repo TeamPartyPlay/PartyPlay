@@ -52,14 +52,12 @@ const EventStatus: FC<IEventStatus> = ({initialStatus, eventId}) => {
 }
 const styles = StyleSheet.create({
     eventCardActionButton2: {
-      height: 36,
-      padding: 8, 
       paddingLeft: 0,
     },
     eventCardActionText2: {
-      color: "#000",
+      color: "#29b473",
       opacity: 0.9,
-      fontSize: 14
+      fontSize: 24,
     },
 
 

@@ -61,6 +61,7 @@ const VoteModal: FC<PropsWithChildren<IVoteModalProps>> = ({openState, resultsSt
                     keyExtractor ={(item) => item.id}
                     data={results.tracks.items}
                     renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => onSubmit(item)}>
                         <View style={styles.containerCardCard}>
                             <View style={styles.containerCard}>
                                 <View style={styles.cardBodyCard}>
@@ -75,15 +76,9 @@ const VoteModal: FC<PropsWithChildren<IVoteModalProps>> = ({openState, resultsSt
 
                                     </View>
                                 </View>
-                                <Ionicons
-                                style={styles.addButton}
-                                name="md-add-circle"
-                                size={50}
-                                color="#ADADB1"
-                                onPress={() => onSubmit(item)}
-                            />
                             </View>
                         </View>
+                        </TouchableOpacity>
                     )}
 
                 />
