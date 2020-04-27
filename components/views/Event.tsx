@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Text, View, Button, AsyncStorage, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { Text, View, Button, AsyncStorage, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { Input, CheckBox } from 'react-native-elements';
 import { DateTime, Tags } from '../Event/AddForm';
@@ -25,17 +25,7 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
     const [isPublic, setIsPublic] = useState<boolean>(false);
     const [tags, setTags] = useState<string[]>([]);
     const [image, setImage] = useState<ImagePickerResult>();
-    const [userLong, setUserLong] = useState<number>(null)
-    const [userLat, setUserLat] = useState<number>(null)
 
-    navigator.geolocation.getCurrentPosition(
-        position => {
-            setUserLong(parseFloat(JSON.stringify(position.coords.longitude)));
-            setUserLat(parseFloat(JSON.stringify(position.coords.latitude)));
-        },
-        error => Alert.alert(error.message),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    )
     const clearForm = () => {
         setName("");
         setDescription("");
@@ -68,7 +58,6 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
     }
 
     const onSubmit = async () => {
-        console.log(userLat)
         try {
             const userToken = await AsyncStorage.getItem('userToken');
             const res = await fetch('https://partyplayserver.herokuapp.com/api/event', {
@@ -81,8 +70,8 @@ const EventScreen: NavigationStackScreenComponent<EventScreenProps> = props => {
                     name,
                     // tslint:disable-next-line: object-literal-sort-keys
                     description,
-                    lat: userLat,
-                    lng: userLong,
+                    lat: 0,
+                    lng: 0,
                     start,
                     end,
                     isPublic,

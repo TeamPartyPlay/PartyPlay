@@ -10,7 +10,7 @@ import {
   TextInputSubmitEditingEventData, 
   RefreshControl
 } from "react-native";
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationStackProp, NavigationStackScreenComponent  } from "react-navigation-stack";
 import { SpotifyContext } from '../providers/Spotify';
 import { SearchBar, Button } from 'react-native-elements';
@@ -139,7 +139,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
         }
       })
     })
-  })
+  }, [])
 
   useEffect(() => {
     getPlaylist();
@@ -176,19 +176,16 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
               searchState={[value, setValue]}
               />}
               
-            <ScrollView 
-              style={styles.containerCardCard}
-              refreshControl={<RefreshControl 
-                refreshing={refreshing} 
-                onRefresh={getPlaylist}/>}>
+            
               {playlist &&               
               <FlatList
                 data={playlist.tracks}
+                refreshControl={<RefreshControl 
+                  refreshing={refreshing} 
+                  onRefresh={getPlaylist}/>}
                 renderItem={({item}) => <PlaylistItem track={item}/>}
                 keyExtractor={(item) => item._id}
               />}
-
-            </ScrollView>
         </View>
     )
 }
@@ -232,7 +229,7 @@ const PlaylistItem: FC<{track: ITrack}> = ({track:{_id, uri, votes}}) => {
   return(
     <View style={styles.containerCard}>
       {track && 
-      <View style={styles.cardBodyCard}>
+        <View style={styles.cardBodyCard}>
         <Image
           source={{uri: track.album.images[0].url}}
           style={styles.cardItemImagePlaceCard}
@@ -241,17 +238,21 @@ const PlaylistItem: FC<{track: ITrack}> = ({track:{_id, uri, votes}}) => {
           <Text style={styles.titleStyleCard}>{track.name}</Text>
           <Text style={styles.subtitleStyleCard}>{track.artists[0].name}</Text>
         </View>
-        <View>
+        <View style={{
+          flex: 0,
+          justifyContent: 'center',
+          alignItems: 'center'}}>
           <Ionicons
-            name="md-add-circle"
+            name="ios-thumbs-up"
             size={50}
             color="#ADADB1"
-            onPress={vote}
+            onPress={vote}           
           />
-          <Text style={styles.subtitleStyleCard}>{votes.length}</Text>
+          <Text style={[styles.subtitleStyleCard, {alignSelf: 'center'}]}>{votes.length}</Text>
         </View>
 
-      </View>}
+      </View>
+      }
       
     </View>
   )

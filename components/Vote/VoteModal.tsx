@@ -29,7 +29,7 @@ const VoteModal: FC<PropsWithChildren<IVoteModalProps>> = ({openState, resultsSt
         try {
             const userToken = await AsyncStorage.getItem('userToken');
             const eventToken = await AsyncStorage.getItem('eventToken');
-            const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/add', {
+            const res = await fetch(`${baseServerUrl}/api/playlist/add`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -41,6 +41,7 @@ const VoteModal: FC<PropsWithChildren<IVoteModalProps>> = ({openState, resultsSt
                     eventToken
                 })
             })
+            console.log(res);
             if(res.status === 200){
                 const json =  await res.json();
                 onClose();

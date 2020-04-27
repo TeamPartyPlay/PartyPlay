@@ -1,8 +1,8 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { View, Text, Image, StyleSheet } from "react-native"; 
+import { View, Text, Image, StyleSheet, ScrollView } from "react-native"; 
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import Modal, { ModalContent, ModalTitle, ModalButton } from 'react-native-modals';
+import Modal, { ModalContent, ModalTitle, ModalButton, ModalFooter } from 'react-native-modals';
 import { IEvent } from '../models/Event';
 import EventStatus from './EventStatus';
 import {baseServerUrl} from '../../secret';
@@ -15,7 +15,7 @@ interface EventListItemProps {
     user: any,
 }
 
-const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, location, description, attendees}, image, user}) => {
+const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, location, description, attendees, start}, image, user}) => {
 
     const [open, setOpen] = openState;
     const [lat, setLat] = useState(44.47816);
@@ -35,201 +35,184 @@ const EventModal: FC<EventListItemProps> = ({openState, event: {_id, name, locat
             setLat(44.47816);
             setLng(-73.21265);
         } else if(location){
-            setLat(location.lat);
-            setLng(location.lng);
+            setLat(44.47816);
+            setLng(-73.21265);
         }
     }, [location])
 
     return(
-        <Modal
-                visible={open}
-                width={0.9}
-                modalTitle={
-                <ModalTitle 
-                align="left"
-                style={{backgroundColor: "#2d2d36", borderBottomColor: "#2d2d36",}}
-                textStyle={{color: "#FFF", }}
-                title= {name}/>}
-            >
-                <ModalContent
-                style={styles.contentModal}>
-                    <View style={[styles.containerContent]}>
-                        <View style={styles.cardItem1Style}>
-                            <View style={styles.headerStyle}>
-                                <Image
-                                    source={{uri: image}}
-                                    style={styles.leftImage}
-                                    resizeMode="contain"
-                                ></Image>
-                                <View style={styles.headerContent}>
-                                    <Text style={styles.textStyle}>{name}</Text>
-                                    <Text style={styles.noteTextStyle}>{String(location)}</Text>                                    
-                                    <EventStatus 
-                                        eventId={_id} 
-                                        initialStatus={isAttending} 
-                                    />
-                                </View>
-                            </View>
-                        </View>
-                        <MapView
-                            style = {styles.mapContainer}
-                            provider="google"
-                            initialRegion={{
-                                latitude: 44.47816,
-                                longitude: -73.21265,
-                                latitudeDelta: 0.0222,
-                                longitudeDelta: 0.0421,
-                            }}>
-                            <Marker 
-                                coordinate = {{
-                                    latitude: 44.47816,
-                                    longitude: -73.21265
-                                }}
-                                pinColor = {"purple"} // any color
-                                title={"Red Square Mardi Gras"}
-                            />
-                        </MapView>
-                        <View style={styles.body}>
-                        <Text style={styles.noteTextStyle}>{description}</Text>
-                        </View>
-                        <View style={styles.actionBody}>
-                            <TouchableOpacity 
-                                style={styles.actionButton1}
-                            >
-                            <Text style={styles.actionText1}>GOING</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </ModalContent>
-                <ModalButton style={styles.modalButton} text='close' onPress = {toggle} />
-            </Modal>
+      <Modal visible={open} width={1.0}
+      footer={
+        <ModalFooter>
+          <ModalButton
+            style={styles.modalButton}
+            color="#29b473"
+            text="CANCEL"
+            onPress={toggle}
+          />
+        </ModalFooter>
+      }>
+        <ModalContent style={{backgroundColor: '#33333D', height: 500}}>
+          <View>
+            <View style={[styles.mapContainer, styles.materialMapView]}>
+              <MapView 
+                style={styles.mapView1}
+                provider="google"
+                initialRegion={{
+                  latitude: lat,
+                  longitude: lng,
+                  latitudeDelta: 0.0222,
+                  longitudeDelta: 0.0421,
+              }}>
+                <Marker 
+                coordinate = {{latitude: 44.476577,longitude: -73.212398}}
+                pinColor = {"purple"} // any color
+                title={"Red Square Mardi Gras"}
+                description={"We may not be in New Orleans but we know how to celebrate Mardi Gras like we are located on Bourbon Street. Come join us for our biggest event of the year. Come for live music, giveaways and fun!"}
+            />
+              </MapView>
+            </View>
+            <View style={styles.eventCardContainer}>
+              <View style={{justifyContent: "space-between", flexDirection: "row",}}>
+                <View style={styles.eventCardBodyContent}>
+                  <Text style={styles.eventCardTitleStyle}>{name}</Text>
+                  <Text style={styles.eventCardSubtitleStyle}>{start}</Text>
+                </View>
+                <EventStatus 
+                eventId={_id} 
+                initialStatus={isAttending}/>
+              </View>
+              <ScrollView style={styles.eventCardBody2}>
+                <Text style={styles.eventCardBodyText}>
+                  {description}
+                </Text>
+              </ScrollView>
+            </View>
+          </View>   
+        </ModalContent>
+        {/* <ModalButton style={styles.modalButton} text='CLOSE' onPress = {toggle} /> */}
+      </Modal>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flexDirection: "row",
-        marginTop: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 15,  
-        marginRight: 15,
+  modalButton: {
+    backgroundColor: "#33333D",
+    color: "#29b473"
+  },
+  captionClose: {
+    color: "#fff",
+    fontSize: 14,
+  },
+  materialButtonDark: {
+    width: 271,
+    height: 36,
+    backgroundColor: "rgba(41,180,115,1)",
+    borderRadius: 100,
+    shadowOffset: {
+      height: 5,
+      width: 5
     },
-    containerModal: {
-        flexDirection: "row",
-        justifyContent: 'center',
-        alignItems: 'center',
+    shadowColor: "rgba(0,0,0,1)",
+    shadowOpacity: 0.3,
+    marginTop: 22,
+  },
+  containerLogin: {
+    backgroundColor: "#212121",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingRight: 16,
+    paddingLeft: 16,
+    elevation: 2,
+    minWidth: 88,
+    borderRadius: 2,
+    shadowOffset: {
+      height: 5,
+      width: 5
     },
-    mapContainer:{
-        width: '100%',
-        minHeight: 210
-    },
-    title: {
-        color: "white",
-        fontSize: 18,
-    },
-    location: {
-        color: "#ADADB1",
-        fontSize: 18,
-    },
-    subcontainer:{
-        flex: 5,
-        flexDirection:"column",
-        justifyContent:"space-evenly",
-        marginRight: 15,
-    },
-    dateContainer: {
-        flexDirection:"column",
-        justifyContent:"space-evenly",
-    },
-    partyImage:{
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginRight: 5,
-    },
-    partyImageModal:{
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-    },
-    contentModal:{
+    shadowColor: "#000",
+    shadowOpacity: 0.35,
+    shadowRadius: 5
+  },
+    eventCardContainer: {
         backgroundColor: "#33333D",
-        width: '100%',
-    },
-    containerContent: {
         flexWrap: "nowrap",
-        elevation: 3,
-        shadowOffset: {
-          height: 2,
-          width: -2
-        },
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 1.5,
-        overflow: "visible"
+        height: '55%',
+        width: '100%',
       },
-      cardItem1Style: {
-        height: 120,
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 16
+      eventCardBodyContent: {
+        flexDirection: 'column',
+        padding: 16,
+        paddingTop: 24,
       },
-      headerStyle: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-      },
-      leftImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 20
-      },
-      headerContent: {
-        justifyContent: "center",
-        paddingLeft: 16
-      },
-      textStyle: {
+      eventCardTitleStyle: {
         color: "#FFF",
-        fontSize: 16,
-        lineHeight: 20
+        paddingBottom: 12,
+        fontSize: 24,
       },
-      noteTextStyle: {
+      eventCardSubtitleStyle: {
         color: "#FFF",
         opacity: 0.5,
         fontSize: 14,
         lineHeight: 16
       },
-      cardItemImagePlace: {
-        flex: 1,
-        backgroundColor: "#FFF",
-        minHeight: 210
+      eventCardBody2: {
+        padding: 16,
+        paddingTop: 8
       },
-      body: {
-        padding: 16
-      },
-      bodyText: {
-        color: "#424242",
+      eventCardBodyText: {
+        color: "#FFF",
+        opacity: 0.5,
+        flexWrap: "wrap",
         fontSize: 14,
-        lineHeight: 20
+        lineHeight: 20,
+        height: 300
       },
-      actionBody: {
+      eventCardActionBody: {
+        backgroundColor: '#33333D',
         flexDirection: "row",
-        padding: 8
+        flex: 0,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        padding: 8,
       },
-      actionButton1: {
+      eventCardActionButton1: {
         height: 36,
-        width: '100%',
-        padding: 8
+        padding: 8,
       },
-      actionText1: {
-        color: "#29b473",
+      eventCardActionText1: {
+        color: "#FFF",
         opacity: 0.9,
         fontSize: 14
       },
+      eventCardActionButton2: {
+        padding: 8,
+      },
+      eventCardActionText2: {
+        color: "#FFF",
+        opacity: 0.9,
+        fontSize: 14
+      },
+      mapContainer: {
+        backgroundColor: '#33333D'
+      },
+      mapView1: {
+        flex: 1,
+      },
+      partyContainer: {
+        backgroundColor: '#33333D',
+      },
+      materialMapView: {
+        width: '100%',
+        height: '45%'
+      },
+      contentModal:{
+        backgroundColor: "#33333D"
+      },
       modalButton: {
-          // color: "#FFF",
-          backgroundColor: "#33333D",
+        borderWidth: 0,
+        backgroundColor: "#33333D"
       }
 })
 

@@ -27,29 +27,12 @@ const ProfileScreen: NavigationStackScreenComponent<Props> = props => {
         </Image>
         <ScrollView>
           <View style={ProfileStyles.bodyContent}>
-            <Text style={ProfileStyles.titleStyle}>David Kopec</Text>
-            <Text style={ProfileStyles.subtitleStyle}>Listening to Nickelback @dartmouth</Text>
+            <Text style={ProfileStyles.titleStyle}>AustinTheRealKing</Text>
           </View>
 
           <View style={ProfileStyles.body2}>
             <Text style={ProfileStyles.bodyText}>
-              BuilderX is a screen design tool which codes React Native for you
-              which design without boundaries, the code is generated simultaneously.
-              Save your designed components as symbol and then simply add it to your
-              design next time. Live preview works on real device. Shout out to the
-              Expo team to make it happen.BuilderX is a screen design tool which codes React Native for you
-              which design without boundaries, the code is generated simultaneously.
-              Save your designed components as symbol and then simply add it to your
-              design next time. Live preview works on real device. Shout out to the
-              Expo team to make it happen.BuilderX is a screen design tool which codes React Native for you
-              which design without boundaries, the code is generated simultaneously.
-              Save your designed components as symbol and then simply add it to your
-              design next time. Live preview works on real device. Shout out to the
-              Expo team to make it happen.BuilderX is a screen design tool which codes React Native for you
-              which design without boundaries, the code is generated simultaneously.
-              Save your designed components as symbol and then simply add it to your
-              design next time. Live preview works on real device. Shout out to the
-              Expo team to make it happen.
+              Likes listening to all kinds of music, recently listend to Good News, Dance Monkey, Wake Me Up, Lose Control, SUGAR, 3 Nights, Breezeblocks, Alien Boy. Likes music from artists Still Woozy, Mac Miller, and Dominic Fike!
             </Text>
           </View>
         </ScrollView>
