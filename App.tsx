@@ -7,6 +7,7 @@ import { ThemeProvider } from 'react-native-elements';
 import theme from './components/providers/Theme';
 
 import { SafeAreaView } from 'react-navigation';
+import { SocketProvider } from './components/providers/Socket';
 
 
 const App = props => {
@@ -15,15 +16,17 @@ const App = props => {
     }
     return(
     <ThemeProvider theme={theme}>
-        <SpotifyProvider >
-            <DeviceProvider>
-                <PlayerProvider>
-                    <PlaylistProvider>
-                        <MainNavigator/>
-                    </PlaylistProvider>
-                </PlayerProvider> 
-            </DeviceProvider>
-        </SpotifyProvider>
+        <SocketProvider>
+            <SpotifyProvider >
+                <DeviceProvider>
+                    <PlayerProvider>
+                        <PlaylistProvider>
+                            <MainNavigator/>
+                        </PlaylistProvider>
+                    </PlayerProvider> 
+                </DeviceProvider>
+            </SpotifyProvider>
+        </SocketProvider>
     </ThemeProvider>
 )};
 

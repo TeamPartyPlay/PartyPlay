@@ -19,6 +19,7 @@ import {baseServerUrl} from '../../secret';
 import { IEvent, IPlaylist, ITrack } from '../models/Event';
 import VoteModal from '../Vote/VoteModal';
 import { Ionicons } from '@expo/vector-icons';
+import { SocketContext } from '../providers/Socket';
 
 // tslint:disable-next-line: interface-name
 interface VoteScreenProps {
@@ -26,14 +27,15 @@ interface VoteScreenProps {
 }
 
 const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
-  const [voteDisplay, setVoteDisplay] = useState([]);
   const {spotify} = useContext(SpotifyContext);
+  const socket = useContext(SocketContext);
   const [value, setValue] = useState<string>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [event, setEvent] = useState<IEvent>();
   const [results, setResults] = useState<SpotifyApi.SearchResponse>();
   const [playlist, setPlaylist] = useState<IPlaylist>();
   const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useState();
 
   const getEvent = async () => {
     const token = await AsyncStorage.getItem('userToken');
@@ -54,7 +56,24 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     }
   }
 
-  const getPlaylist = async () => {
+  const getUser = async () => {
+        
+    const userToken = await AsyncStorage.getItem("userToken");
+    const res = await fetch(`${baseServerUrl}/api/user?token=${userToken}`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+    })
+    if(res.status === 200){
+        const json = await res.json();
+        setUser(json);
+    }
+    
+  }
+
+  const getPlaylist = async () : Promise<IPlaylist> => {
     setRefreshing(true);
     const token = await AsyncStorage.getItem('userToken');
     const eventToken = await AsyncStorage.getItem('eventToken');
@@ -70,10 +89,57 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
       if(res.status === 200){
         const json = await res.json();
         setPlaylist(json);
+        setRefreshing(false);
+        return json;
       }
     }
     setRefreshing(false);
+    return null;
   }
+
+  const removeTrack = async (trackId: string) => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    const eventToken = await AsyncStorage.getItem('eventToken');
+    const res = await fetch('https://partyplayserver.herokuapp.com/api/playlist/remove', {
+          method: 'POST',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: trackId,
+            token: userToken,
+            eventToken
+          })
+      })
+    if(res.status === 200){
+      const json =  await res.json();
+    }
+  }
+
+  useEffect(() => {
+    console.log("Creating Socket Event")
+    socket.on("updatePlaylist", () => {
+      console.log("Event Emit")
+      getPlaylist().then(res => {
+        if(event.owner === user._id){
+          const {tracks} = res;
+          const tracksToAdd: string[] = [];
+          for(const track of tracks) {
+            if(track.votes.length === 3) {
+              tracksToAdd.push(track.uri.split(':').pop());
+              removeTrack(track._id);
+            }
+          }
+          if(tracksToAdd.length){
+            spotify
+              .addTracksToPlaylist(playlist.spotifyId, tracksToAdd)
+              .then(result => console.log(result));
+          }
+        }
+      })
+    })
+  })
 
   useEffect(() => {
     getPlaylist();
@@ -82,6 +148,7 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
   useEffect(() => {
     getEvent();
     getPlaylist();
+    getUser();
   }, []);
 
   useEffect(() => {
@@ -96,20 +163,6 @@ const VoteScreen: NavigationStackScreenComponent<VoteScreenProps> = props => {
     return(
 
         <View>
-            <FlatList
-                keyExtractor ={(item) => item.key}
-                data={voteDisplay}
-                renderItem={({ item }) => (
-                    <View>
-                        <Image
-                            style={styles.albumCover}
-                            source={{uri: item.imageURL}}
-                        />
-                        <Text>{item.name}</Text>
-                        <Text>{item.artist}</Text>
-                    </View>
-                )}
-            />
             <SearchBar
                 round
                 placeholder="Search Songs, Artists, and Albums"
@@ -160,7 +213,6 @@ const PlaylistItem: FC<{track: ITrack}> = ({track:{_id, uri, votes}}) => {
             eventToken
           })
       })
-      console.log(res);
       if(res.status === 200){
           const json =  await res.json();
       }
